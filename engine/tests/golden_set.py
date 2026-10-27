@@ -1,0 +1,67 @@
+# -*- coding: utf-8 -*-
+# golden set: (prompt, dispatch expected, premium plan expected)
+CASES=[
+ # --- short + simple (SKIP correct) ---
+ ("Add an install section to the README", False, False),
+ ("Fix the typo in utils.py", False, False),
+ ("Rename the variable x to total_price", False, False),
+ ("Add an empty __init__.py to the tests folder", False, False),
+ ("Bump the version to 1.2.3", False, False),
+ ("Switch the date format in the log line to ISO", False, False),
+ # --- long/multi + medium (PASS correct, not premium) ---
+ ("First add a retry setting to config.py, then use it in client.py and update the tests", True, False),
+ ("Update the User fields in api.py and models.py to match the new schema, write a migration", True, False),
+ ("1) adapt the parser to the new format 2) keep a fallback for the old format 3) test it with two samples", True, False),
+ ("Convert every print call in the application to logging, pick the right levels, keep the output format and run a smoke test", True, False),
+ ("Add a CSV export feature: endpoint, service layer, tests and documentation", True, False),
+ ("Add TTL support to the cache layer and update the existing calls, extend the tests", True, False),
+ # --- SHORT BUT HARD (leak risk: must be PASS!) ---
+ ("Redesign the auth layer", True, True),
+ ("Normalize the database schema", True, True),
+ ("Find and fix the race condition", True, True),
+ ("Detect and fix the memory leak", True, True),
+ ("Move the module to an asynchronous architecture", True, True),
+ ("Close the security hole in the payment flow", True, True),
+ # --- long + hard (PASS + premium) ---
+ ("Split the service into a microservice architecture: order and stock become separate services, use a queue between them, keep backward compatibility", True, True),
+ ("Refactor the existing synchronous processing pipeline into an event-driven structure, add an idempotency guarantee, think about scalability", True, True),
+ ("Move identity verification to OAuth2: token refresh, session revocation and a migration plan for the old API keys included, a complex job", True, True),
+ # --- long but ACTUALLY simple (false-positive risk) ---
+ ("Update the same constant in all of these files: a.py b.py c.py d.py — change the value from 5 to 10, change nothing else, no tests needed", True, False),
+ ("Add the same note to the README, CHANGELOG and INSTALL files: 'v2 requires python 3.12' — copy-paste is enough", True, False),
+ ("Review the logs and extract a summary for me, do not change any code, only write a report", False, False),
+ ("Report only on security findings in src/auth.py", False, False),
+ ("Only a report on security findings in src/auth.py", False, False),
+ ("Please report only on the authentication layer", False, False),
+ ("Review src/auth.py; don't change any code", False, False),
+ # Read-only intent is independent of a polite prefix and the order of the constraint.
+ ("Review the security of src/auth.py; do not make changes.", False, False),
+ ("Give me only a report on security findings in src/auth.py.", False, False),
+ ("Please produce only a report on security findings in src/auth.py.", False, False),
+ ("I need only a report on the authentication layer.", False, False),
+ ("Do not change any code. Review the security of src/auth.py.", False, False),
+ ("Do not make changes; inspect the authentication layer.", False, False),
+ ("Review the security of src/auth.py; make no changes.", False, False),
+ ("Review the authentication layer; do not modify any files.", False, False),
+ ("Audit the security of src/auth.py; no modifications.", False, False),
+ ("Please review the security of src/auth.py in read-only mode.", False, False),
+ ("Give me a read-only review of src/auth.py.", False, False),
+ ("DO NOT MAKE ANY CHANGES.\nPlease inspect the security checks.", False, False),
+ ("Review the security checks; don\u2019t make changes.", False, False),
+ ("Explain the security of src/auth.py; do not make changes.", False, False),
+ ("Compare the authentication modules; no modifications.", False, False),
+ ("Find the security flaw; do not write any code.", False, False),
+ # A feature name or a restriction on settings alone does not forbid code changes.
+ ("Implement a read-only log viewer and review the security checks.", True, False),
+ ("Implement a report-only endpoint and review the security checks.", True, False),
+ ("Implement read-only mode and review the security checks.", True, False),
+ ("Review the security checks and implement the feature; do not make changes to settings.", True, False),
+ ("Review the security checks and implement the feature without modifications to settings.", True, False),
+ ("Review the security checks and fix the bug; no changes to settings.", True, False),
+ ("Rev\u0131ew the security checks in read-only mode.", True, False),
+ ("Review the security checks; do not make change\u017f.", True, False),
+ # --- B222 (25.09): code names and substrings are not hard words (9 of the 10 PREMIUMs on 23-24.09 came from here) ---
+ ("Add 4 tests for `normalize_timestamp` to `tests/unit/test_canonical.py` and keep the existing tests green", True, False),
+ ("Show a readable message instead of the traceback in the error output and update the cli tests", True, False),
+ ("Find and fix the race condition inside `cache.py`, keep the `refresh_token` flow intact", True, True),
+]

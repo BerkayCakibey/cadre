@@ -1,0 +1,12 @@
+Audit complete; all evidence collected, no correction needed, no tests deleted and no commit made.
+
+**Checks:**
+- Branch: `cadre/20260923-043146-...` worktree ✓; HEAD remains `f08bef7`, with no run commit, only staged `A tests/unit/test_cli_version.py` and 2 untracked workflow files.
+- Diff `f08bef7...`: only `tests/unit/test_cli_version.py` added; `src/` and existing tests unchanged; all 3 changed_files were read individually.
+- (a) `--version`: `cli.py:2042-2044` uses `action="version"`, `version=f"%(prog)s {package_version()}"`, prog=`feedloom`; the test verifies SystemExit 0, output and empty stderr; **2 passed**.
+- (b) `collect --help`: subparser exists at `cli.py:2426`; the test checks rc=0 and output containing `feedloom collect` and `fixture`; **2 passed**.
+- (c) `make check`: QA attempt 2 exit 0; log: format 161 files, Ruff "All checks passed", BasedPyright "0 errors", pytest **3093 passed** / 97 skipped, pip-audit clean and distribution audit passed.
+
+```json
+{"revision": "1ac22fd46a8262c44dff3425958192510553527ba8b45125b643f28026540951", "verdict": "PASS", "acceptance": [{"id": "main", "status": "PASS", "evidence": "(a) src/feedloom/cli.py:2042-2044 preserves --version action='version', version=f\"%(prog)s {package_version()}\" and prog='feedloom'. test_cli_version.py::test_version_flag_prints_exact_version asserts SystemExit.code==0, out.strip()==f\"feedloom {package_version()}\" and err==''; focused execution: 2 passed in 0.05s. (b) cli.py:2426 retains the collect subparser with fixture/live subcommands; test_collect_help_prints_subcommand_help verifies SystemExit.code==0 and output containing \"feedloom collect\" plus \"fixture\", passing in the same run. (c) make check: QA attempt 2 exit_code=0; logs show Ruff format prepared 161 files, Ruff check \"All checks passed\", BasedPyright \"0 errors, 0 warnings, 0 notes\", pytest \"3093 passed, 97 skipped\", pip-audit \"No known vulnerabilities\" and check_distribution.py \"distribution audit passed\". Scope: git diff f08bef7 shows only tests/unit/test_cli_version.py added with 36 lines; src/ and existing tests are unchanged. HEAD remains f08bef7 with no commit/push. .tasks.json and .cadre-plan/ are run workflow artifacts rather than product code. The .tasks.json 05-make-check note records a type failure at that earlier moment, but the final QA gate at the target revision exits 0 with no BasedPyright errors. This is a stale run record rather than a product defect."}]}
+```

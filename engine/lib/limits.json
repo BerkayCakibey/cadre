@@ -1,0 +1,10 @@
+{
+  "output": {"plan": 65536, "quality": 32768, "qa": 32768, "lane": 32768},
+  "deadline_sec": {"plan": 1800, "quality": 2400, "qa": 2700, "split": 900},
+  "runner_duration_sec": {"warning": 2700, "last": 5400},
+  "context": {"lane_cap": 262144, "lane_pay": 20000},
+  "openrouter": {"price_fresh_sec": 3600, "price_repeat_sec": 300, "price_age_sec": 21600, "low_uptime": 95, "session_sticky_sec": 0, "endpoint_error_sec": 1800},
+  "review": {"version": "limited-review-v3", "plan-review": {"request": 7, "tool": 12, "duration_sec": 300, "pay_percent": 20}, "review-author": {"request": 9, "tool": 16, "duration_sec": 480, "pay_percent": 15}, "review-final": {"request": 6, "tool": 10, "duration_sec": 510, "pay_percent": 30}, "review-recheck": {"request": 6, "tool": 10, "duration_sec": 510, "pay_percent": 30}, "pockets": {"lanes": 0.40, "judge": 0.50, "helper": 0.10}},
+  "review_code": {"version": "limited-code-plan-v1", "plan_pay_percent": 100},
+  "effort": {"version": "economic-effort-v1", "easy_lane": null}
+}

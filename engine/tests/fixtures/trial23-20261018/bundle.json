@@ -1,0 +1,576 @@
+{
+ "source": {
+  "run_id": "request-609d3fc0b85cb09920086b6b05739a9a",
+  "task": "review-final-eb1a4c73a9fb",
+  "source_head": "dde96b28a8b4b4b3aaf6ace622526d30386aada7"
+ },
+ "revision": "7304bdb4a87476e70a3e101780623b16f4b769b5231e1dc171a3e2308f90b183",
+ "criteria": [
+  "request",
+  "evidence",
+  "scope",
+  "task:g1",
+  "task:g2",
+  "task:g3"
+ ],
+ "acceptance": "Only the specified public script, unit test and selected RC-OSS-005 card slice are reviewed read-only; Source remains unchanged; Explain concretely how the code prepares the environment using temporary state and settings files; Explain concretely how the working directory is changed and restored; Explain how the code blocks browser and DNS access; Report the visible migration and restore calls, comparison conditions and expected returns without claiming unread checksum implementations or corruption tests; Explain collect and evaluate steps with their actual calls and result checks; Explain the visible checks for dashboard list and detail pages and static assets; Explain data and configuration checks after backup, same-version reopen and restore into a fresh state directory; Explain the test file’s import target and whether it directly runs the release_smoke flow; Write positive output assertions and expected values concretely in Findings, a Method sentence saying only that assertions were inspected does not satisfy this; Write negative fixture cases and expected errors concretely in Findings; Compare the card’s scope claim beyond migrations with the actual script steps; Explicitly attribute historical platform and installation claims to the card rather than presenting them as independent verification by this review; State that real clean installation, cross-version update and planned rollback, clean-environment lock resolution, platform matrix and release acceptance cannot be verified in this slice; RC-OSS-005 remains PROCEED and this status is stated explicitly in the report; At most 5 file:line evidence references are used, no command evidence; Do not write test totals or counts; Do not claim script or test execution PASS or card closure; Independent final review; Budget/duration constant.",
+ "plan": {
+  "job_id": "request-plan",
+  "job_kind": "review",
+  "tasks": [
+   {
+    "id": "g1",
+    "definition": "Catalog release_smoke.py steps with file:line evidence, listing every operation: browser/DNS blocking, cwd isolation, synthetic collect, evaluate, dashboard, migration/checksum, reopen and backup/restore",
+    "acceptance": "Produce file:line evidence from release_smoke.py for each step; separately list steps the script does not perform, including update/rollback, platform matrix and clean installation; compare these with the RC-OSS-005 claim that the script tests more than migrations",
+    "files": [
+     "scripts/release_smoke.py"
+    ],
+    "model": "auto",
+    "difficulty": 1,
+    "parallel_group": 1,
+    "estimate_min": 8,
+    "estimate_usd": 0.12,
+    "dependent": []
+   },
+   {
+    "id": "g2",
+    "definition": "Determine what test_release_smoke_client.py actually asserts: the target function, positive and negative fixture cases, and whether it directly runs release_smoke.py",
+    "acceptance": "State with concrete file:line evidence the import target export_smoke_client.py, positive assertions (3 lines, certifi/httpcore/httpx, sha256 hash, no playwright), negative cases (missing/duplicate/no-wheel/bad-hash), and direct relationship with release_smoke.py",
+    "files": [
+     "tests/unit/test_release_smoke_client.py"
+    ],
+    "model": "auto",
+    "difficulty": 1,
+    "parallel_group": 1,
+    "estimate_min": 5,
+    "estimate_usd": 0.08,
+    "dependent": []
+   },
+   {
+    "id": "g3",
+    "definition": "Compare the RC-OSS-005 claim that release_smoke.py tests more than migrations with findings from g1 and g2, then compile Findings, Uncertainties, Method and the evidence appendix",
+    "acceptance": "Findings demonstrates that release_smoke.py covers collect/evaluate/dashboard/static/reopen/restore beyond migrations using K1-K5 evidence; state that the test file tests export_smoke_client.py rather than release_smoke.py; Uncertainties states that clean installation, update, rollback, platform matrix and release acceptance cannot be verified in this slice; state RC-OSS-005 is PROCEED; at most 5 file:line evidence references are used; do not write numerical test totals or counts",
+    "files": [
+     "scripts/release_smoke.py",
+     "tests/unit/test_release_smoke_client.py"
+    ],
+    "model": "auto",
+    "difficulty": 2,
+    "parallel_group": 0,
+    "estimate_min": 10,
+    "estimate_usd": 0.15,
+    "dependent": [
+     "g1",
+     "g2"
+    ]
+   }
+  ],
+  "assumptions": [
+   {
+    "id": "A1",
+    "choice": "Review only the RC-OSS-005 scope verification slice without closing the full card",
+    "reason": "The request explicitly asks for one read-only slice, and the card remains PROCEED"
+   },
+   {
+    "id": "A2",
+    "choice": "The claim that the script tests more than migrations refers to collector, evaluator, dashboard and backup/restore steps beyond DB initialization",
+    "reason": "The card’s #21/#22 proposal would reduce the script to DB initialization, whereas more refers to the additional steps"
+   },
+   {
+    "id": "A3",
+    "choice": "The card’s technical matrix 6/6 PASS, test counts and platform details cannot be verified in this slice and are reported only as card claims",
+    "reason": "The request forbids real installation or execution in the public worktree and reading earlier review logs"
+   }
+  ],
+  "decisions": [],
+  "source_items": [],
+  "source_coverage": {
+   "sha256": "0ae206427187d19e9330e7fe986aa89c68ea1d78f548b9af342d29626544069b",
+   "characters": 1822,
+   "inline_characters": 1822,
+   "truncated": [],
+   "verified": [],
+   "merged": []
+  }
+ },
+ "report_input": {
+  "Findings": [
+   {
+    "text": "Browser and DNS access are blocked at main() entry using _NoBrowser MetaPathFinder and a socket.getaddrinfo monkeypatch",
+    "evidence_ids": [
+     "K2"
+    ]
+   },
+   {
+    "text": "A temporary directory is created, environment variables configure DB/settings paths, cwd changes to the state directory and is restored in finally",
+    "evidence_ids": [
+     "K2"
+    ]
+   },
+   {
+    "text": "load_migrations() supplies the expected migrations, database.initialize() returns new migrations, and an empty return on repetition verifies idempotence",
+    "evidence_ids": [
+     "K2"
+    ]
+   },
+   {
+    "text": "collect_source() is called with synthetic Adapter and Transport fixtures and its result status is checked with _require",
+    "evidence_ids": [
+     "K2"
+    ]
+   },
+   {
+    "text": "eligible_rows() checks eligibility and process_observed_items() runs evaluation, while _require verifies no failures and the processed record",
+    "evidence_ids": [
+     "K3"
+    ]
+   },
+   {
+    "text": "FastAPI TestClient verifies successful responses from the /items list, /items/{id} detail and /static/app.js asset pages",
+    "evidence_ids": [
+     "K3"
+    ]
+   },
+   {
+    "text": "sqlite3 backup saves the canonical and dashboard databases, and migration initialization is repeated on same-version reopen with an empty return checked",
+    "evidence_ids": [
+     "K3"
+    ]
+   },
+   {
+    "text": "_require verifies migration checksum, listing data and user configuration preservation in databases copied from the backup to a fresh restore directory",
+    "evidence_ids": [
+     "K3"
+    ]
+   },
+   {
+    "text": "The RC-OSS-005 card claims existing release_smoke.py tests more than migrations and #21/#22 proposes reducing it to DB initialization",
+    "evidence_ids": [
+     "K1"
+    ]
+   },
+   {
+    "text": "test_release_smoke_client.py imports export_client from scripts/export_smoke_client.py through runpy and does not run release_smoke.py directly",
+    "evidence_ids": [
+     "K4"
+    ]
+   },
+   {
+    "text": "The positive test asserts export_client(uv.lock) output contains certifi/httpcore/httpx packages with sha256 hashes and no playwright",
+    "evidence_ids": [
+     "K4"
+    ]
+   },
+   {
+    "text": "The parametrized negative test expects export_client to raise ValueError for missing/duplicate/no-wheel/bad-hash fixture cases",
+    "evidence_ids": [
+     "K4"
+    ]
+   }
+  ],
+  "Uncertainties": [
+   {
+    "text": "Clean installation and cross-version update/rollback cannot be verified in this read-only review, and the card remains PROCEED",
+    "evidence_ids": [
+     "K1"
+    ]
+   },
+   {
+    "text": "Platform matrix and release acceptance are card claims that cannot be independently verified in this review",
+    "evidence_ids": [
+     "K1"
+    ]
+   },
+   {
+    "text": "Clean-environment lock resolution, browser extra security work and remote CI cannot be verified in this slice",
+    "evidence_ids": [
+     "K1"
+    ]
+   }
+  ],
+  "Method": [
+   {
+    "text": "The full scripts/release_smoke.py was read and all _require() calls and functional steps in main() and _exercise() were cataloged",
+    "evidence_ids": [
+     "K2",
+     "K3"
+    ]
+   },
+   {
+    "text": "tests/unit/test_release_smoke_client.py was read to identify the import target, positive assertions and parametrized negative fixture cases",
+    "evidence_ids": [
+     "K4"
+    ]
+   },
+   {
+    "text": "The RC-OSS-005 card text in backlog.text was compared with the script steps",
+    "evidence_ids": [
+     "K1"
+    ]
+   }
+  ]
+ },
+ "evidence": [
+  {
+   "id": "K1",
+   "round": "file",
+   "source": "06_PRODUCT_BACKLOG.md:924-957",
+   "expected": "#### [ ] RC-OSS-005 — Clean install/update/rollback quality acceptance (`P1`)",
+   "claim": "The RC-OSS-005 card at 06_PRODUCT_BACKLOG.md:924-957 is PROCEED and claims release_smoke.py tests more than migrations with a passing technical matrix"
+  },
+  {
+   "id": "K2",
+   "round": "file",
+   "source": "scripts/release_smoke.py:1-200",
+   "expected": "\"\"\"Exercise a distribution with disposable synthetic state and no browser/network.",
+   "claim": "scripts/release_smoke.py lines 1-200: docstring, browser/DNS blocking, TemporaryDirectory environment setup, cwd isolation, load_migrations/initialize migration steps and synthetic Adapter/Transport collect_source call"
+  },
+  {
+   "id": "K3",
+   "round": "file",
+   "source": "scripts/release_smoke.py:201-305",
+   "expected": "        database,",
+   "claim": "scripts/release_smoke.py lines 201-305: collect_source result check, eligible_rows/process_observed_items evaluation, TestClient dashboard list/detail/static, sqlite3 backup, same-version reopen and post-restore checksum/data/config checks"
+  },
+  {
+   "id": "K4",
+   "round": "file",
+   "source": "tests/unit/test_release_smoke_client.py:1-50",
+   "expected": "from __future__ import annotations",
+   "claim": "The test imports export_client from export_smoke_client.py, checks certifi/httpcore/httpx sha256 hashes and no playwright in the positive case, and expects ValueError for missing/duplicate/no-wheel/bad-hash cases"
+  }
+ ],
+ "claims": [
+  {
+   "id": "Findings-1",
+   "text": "Browser and DNS access are blocked at main() entry using _NoBrowser MetaPathFinder and a socket.getaddrinfo monkeypatch",
+   "evidence_ids": [
+    "K2"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {
+    "DNS": [
+     "K2:40: raise RuntimeError(\"Release smoke attempted external DNS\")",
+     "K2:74: \"reopen/restore; isolated cwd; local; no browser or DNS\""
+    ],
+    "_NoBrowser": [
+     "K2:27: class _NoBrowser(importlib.abc.MetaPathFinder):",
+     "K2:49: sys.meta_path.insert(0, _NoBrowser())"
+    ],
+    "MetaPathFinder": [
+     "K2:27: class _NoBrowser(importlib.abc.MetaPathFinder):"
+    ]
+   }
+  },
+  {
+   "id": "Findings-2",
+   "text": "A temporary directory is created, environment variables configure DB/settings paths, cwd changes to the state directory and is restored in finally",
+   "evidence_ids": [
+    "K2"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {}
+  },
+  {
+   "id": "Findings-3",
+   "text": "load_migrations() supplies the expected migrations, database.initialize() returns new migrations, and an empty return on repetition verifies idempotence",
+   "evidence_ids": [
+    "K2"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {
+    "load_migrations": [
+     "K2:102: from feedloom.database import Database, load_migrations",
+     "K2:137: expected = tuple(load_migrations())"
+    ]
+   }
+  },
+  {
+   "id": "Findings-4",
+   "text": "collect_source() is called with synthetic Adapter and Transport fixtures and its result status is checked with _require",
+   "evidence_ids": [
+    "K2"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {
+    "collect_source": [
+     "K2:95: collect_source,",
+     "K2:200: result = collect_source("
+    ],
+    "_require": [
+     "K2:43: def _require(condition: bool, message: str) -> None:",
+     "K2:107: _require("
+    ]
+   }
+  },
+  {
+   "id": "Findings-5",
+   "text": "eligible_rows() checks eligibility and process_observed_items() runs evaluation, while _require verifies no failures and the processed record",
+   "evidence_ids": [
+    "K3"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {
+    "eligible_rows": [
+     "K3:221: rows = eligible_rows([row], config, reader=reader)"
+    ],
+    "process_observed_items": [
+     "K3:230: from feedloom.pipeline import process_observed_items",
+     "K3:233: outcome = process_observed_items("
+    ],
+    "_require": [
+     "K3:208: _require(",
+     "K3:215: _require(row is not None, \"Collected listing missing\")"
+    ]
+   }
+  },
+  {
+   "id": "Findings-6",
+   "text": "FastAPI TestClient verifies successful responses from the /items list, /items/{id} detail and /static/app.js asset pages",
+   "evidence_ids": [
+    "K3"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [
+    "FastAPI"
+   ],
+   "term_warnings": [
+    {
+     "term": "FastAPI",
+     "request_term": false,
+     "scope_lines": [
+      "card:84: from fastapi.testclient import TestClient"
+     ]
+    }
+   ],
+   "code_lines": {}
+  },
+  {
+   "id": "Findings-7",
+   "text": "sqlite3 backup saves the canonical and dashboard databases, and migration initialization is repeated on same-version reopen with an empty return checked",
+   "evidence_ids": [
+    "K3"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {
+    "sqlite3": [
+     "K3:213: reader = ListingReader(state / \"canonical.sqlite3\")",
+     "K3:244: store = DashboardStore(state / \"dashboard.sqlite3\")"
+    ]
+   }
+  },
+  {
+   "id": "Findings-8",
+   "text": "_require verifies migration checksum, listing data and user configuration preservation in databases copied from the backup to a fresh restore directory",
+   "evidence_ids": [
+    "K3"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {
+    "_require": [
+     "K3:208: _require(",
+     "K3:215: _require(row is not None, \"Collected listing missing\")"
+    ]
+   }
+  },
+  {
+   "id": "Findings-9",
+   "text": "The RC-OSS-005 card claims existing release_smoke.py tests more than migrations and #21/#22 proposes reducing it to DB initialization",
+   "evidence_ids": [
+    "K1"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {
+    "RC-OSS-005": [
+     "K1:925: #### [ ] RC-OSS-005 — Clean install/update/rollback quality acceptance (`P1`)"
+    ]
+   }
+  },
+  {
+   "id": "Findings-10",
+   "text": "test_release_smoke_client.py imports export_client from scripts/export_smoke_client.py through runpy and does not run release_smoke.py directly",
+   "evidence_ids": [
+    "K4"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {
+    "export_client": [
+     "K4:11: export_client = cast(",
+     "K4:13: runpy.run_path(str(ROOT / \"scripts/export_smoke_client.py\"))[\"export_client\"],"
+    ]
+   }
+  },
+  {
+   "id": "Findings-11",
+   "text": "The positive test asserts export_client(uv.lock) output contains certifi/httpcore/httpx packages with sha256 hashes and no playwright",
+   "evidence_ids": [
+    "K4"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {
+    "export_client": [
+     "K4:11: export_client = cast(",
+     "K4:13: runpy.run_path(str(ROOT / \"scripts/export_smoke_client.py\"))[\"export_client\"],"
+    ],
+    "sha256": [
+     "K4:22: assert all(\" --hash=sha256:\" in line for line in lines)",
+     "K4:34: digest = \"sha256:\" + \"1\" * 64"
+    ]
+   }
+  },
+  {
+   "id": "Findings-12",
+   "text": "The parametrized negative test expects export_client to raise ValueError for missing/duplicate/no-wheel/bad-hash fixture cases",
+   "evidence_ids": [
+    "K4"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [
+    "fixture"
+   ],
+   "term_warnings": [
+    {
+     "term": "fixture",
+     "request_term": false,
+     "scope_lines": [
+      "card:147: return PageRequest(\"https://fixture.example.org/api/items\")",
+      "card:167: source_url=\"https://fixture.example.org/items/1\",",
+      "card:168: canonical_url=\"https://fixture.example.org/items/1\","
+     ]
+    }
+   ],
+   "code_lines": {
+    "export_client": [
+     "K4:11: export_client = cast(",
+     "K4:13: runpy.run_path(str(ROOT / \"scripts/export_smoke_client.py\"))[\"export_client\"],"
+    ],
+    "ValueError": [
+     "K4:49: with pytest.raises(ValueError):"
+    ]
+   }
+  },
+  {
+   "id": "Uncertainties-1",
+   "text": "Clean installation and cross-version update/rollback cannot be verified in this read-only review, and the card remains PROCEED",
+   "evidence_ids": [
+    "K1"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {
+    "PROCEED": [
+     "K1:929: **Status: PROCEED — technical matrix6/6 PASS (09.10), release acceptance remains open.** Real"
+    ]
+   }
+  },
+  {
+   "id": "Uncertainties-2",
+   "text": "Platform matrix and release acceptance are card claims that cannot be independently verified in this review",
+   "evidence_ids": [
+    "K1"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {}
+  },
+  {
+   "id": "Uncertainties-3",
+   "text": "Clean-environment lock resolution, browser extra security work and remote CI cannot be verified in this slice",
+   "evidence_ids": [
+    "K1"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {}
+  },
+  {
+   "id": "Method-1",
+   "text": "The full scripts/release_smoke.py was read and all _require() calls and functional steps in main() and _exercise() were cataloged",
+   "evidence_ids": [
+    "K2",
+    "K3"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {
+    "_exercise": [
+     "K2:69: _exercise(state)",
+     "K2:79: def _exercise(state: Path) -> None:"
+    ],
+    "_require": [
+     "K2:43: def _require(condition: bool, message: str) -> None:",
+     "K2:107: _require("
+    ]
+   }
+  },
+  {
+   "id": "Method-2",
+   "text": "tests/unit/test_release_smoke_client.py was read to identify the import target, positive assertions and parametrized negative fixture cases",
+   "evidence_ids": [
+    "K4"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [
+    "fixture"
+   ],
+   "term_warnings": [
+    {
+     "term": "fixture",
+     "request_term": false,
+     "scope_lines": [
+      "card:147: return PageRequest(\"https://fixture.example.org/api/items\")",
+      "card:167: source_url=\"https://fixture.example.org/items/1\",",
+      "card:168: canonical_url=\"https://fixture.example.org/items/1\","
+     ]
+    }
+   ],
+   "code_lines": {}
+  },
+  {
+   "id": "Method-3",
+   "text": "The RC-OSS-005 card text in backlog.text was compared with the script steps",
+   "evidence_ids": [
+    "K1"
+   ],
+   "trimmed_evidence": [],
+   "evidence_non_terms": [],
+   "term_warnings": [],
+   "code_lines": {
+    "RC-OSS-005": [
+     "K1:925: #### [ ] RC-OSS-005 — Clean install/update/rollback quality acceptance (`P1`)"
+    ]
+   }
+  }
+ ],
+ "operator": {
+  "unsatisfied": [
+   "R3",
+   "R6",
+   "R11"
+  ]
+ }
+}

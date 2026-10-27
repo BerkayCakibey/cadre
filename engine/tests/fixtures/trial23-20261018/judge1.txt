@@ -1,0 +1,702 @@
+I am reading the source files first to verify the report’s K1-K4 evidence against the actual sources.
+
+The source files have been read. I will now verify the report systematically.
+
+---
+
+## POLL (Evidence located in its source)
+
+| ID | Source | Result |
+|---|---|---|
+| K1 | `06_PRODUCT_BACKLOG.md:924-957` (backlog.text) | RC-OSS-005 heading at 925, PROCEED at 929, and the #21/#22 claim that it tests more than migrations at 953-954 → **verified** |
+| K2 | `scripts/release_smoke.py:1-200` | `_NoBrowser` (27), `_no_dns` (40), `main()` (48-76), `_exercise()` (79-208), `TemporaryDirectory` (51), `os.environ` (53-62), `os.chdir`/`finally` (67-72), `load_migrations`/`initialize` (137-139), `Adapter` (141-173), `Transport` (175-183), `collect_source` (200-208) → **verified** |
+| K3 | `scripts/release_smoke.py:201-305` | `_require(result.status==...)` (206-208), `eligible_rows` (221), `process_observed_items` (230-237), `TestClient` `/items` `/items/{id}` `/static/app.js` (253-268), `sqlite3.backup` (269-278), reopen `initialize()==()` (279-281), restore checksum/data/config `_require` (283-305) → **verified** |
+| K4 | `tests/unit/test_release_smoke_client.py:1-50` | `runpy.run_path(...export_smoke_client.py)[export_client]` (11-13), positive `certifi/httpcore/httpx`, `sha256`, no `playwright` (17-22), parametrized missing/duplicate/no-wheel/bad-hash and `pytest.raises(ValueError)` (25-50) → **verified** |
+
+## CLAIMS (Support assessment for every evidenced sentence)
+
+**Findings-1**: K2:27-28 defines _NoBrowser(MetaPathFinder), K2:40 defines _no_dns, and K2:49-50 inserts sys.meta_path and assigns socket.getaddrinfo = _no_dns at main() entry, all visible verbatim in the cited range. → support=**full**
+
+**Findings-2**: K2:51 TemporaryDirectory, K2:53-62 DB/settings paths in os.environ.update, K2:67-68 os.chdir(state) and K2:71-72 finally: os.chdir(previous_cwd) occur verbatim in the cited range. → support=**full**
+
+**Findings-3**: K2:102 imports Database/load_migrations, K2:137 calls tuple(load_migrations()), K2:138 checks initialize()==expected and K2:139 checks idempotence through initialize()==(), all visible in the cited range. → support=**full**
+
+**Findings-4**: K2:95 imports collect_source, K2:141-173 defines Adapter, K2:175-183 defines Transport, K2:200 calls result = collect_source( and K2:206-208 checks _require(result.status==success...), all visible in the cited range. → support=**full**
+
+**Findings-5**: K3:221 eligible_rows([row], config, reader=reader), K3:230/233 process_observed_items and K3:236-237 _require(not outcome.failures and len(outcome.processed)==1) occur verbatim in the cited range. → support=**full**
+
+**Findings-6**: K3:84 imports TestClient from fastapi.testclient: FastAPI appears as the lowercase package fastapi, which is equivalent, and K3:257-268 contains the /items, /items/{id} and /static/app.js calls and status_code==200 checks. → support=**full**
+
+**Findings-7**: K3:270-275 uses sqlite3.connect and live.backup(saved), while K3:279-281 checks reopen through Database(...).initialize()==(), all visible in the cited range. → support=**full**
+
+**Findings-8**: K3:285-288 creates the restored directory, K3:289-291 checks Database(restored...).initialize()==(), K3:293-295 compares ListingReader listing data and K3:299-301 compares load_user_config, all visible in the cited range. → support=**full**
+
+**Findings-9**: K1:925 contains the RC-OSS-005 heading and K1:953-954 states that existing release_smoke.py tests more than migrations and should not be reduced back to DB initialization (#21/#22), visible in the cited range. → support=**full**
+
+**Findings-10**: K4:11-13 imports runpy.run_path(...scripts/export_smoke_client.py)[export_client], with no release_smoke.py import, so the test does not directly run release_smoke.py. → support=**full**
+
+**Findings-11**: K4:18 calls export_client(ROOT/uv.lock), K4:20 asserts certifi/httpcore/httpx, K4:21 asserts sha256 hashes and K4:22 asserts no playwright, all visible in the cited range. → support=**full**
+
+**Findings-12**: K4:25 parametrizes missing/duplicate/no-wheel/bad-hash and K4:49 uses pytest.raises(ValueError), visible in the cited range, with fixture used in the pytest parametrization context. → support=**full**
+
+**Uncertainties-1**: K1:929 states Status: PROCEED and K1:943-944 states the full card was not closed, visible in the cited range, while unverifiable clean installation/update/rollback is a legitimate limit of read-only review. → support=**full**
+
+**Uncertainties-2**: K1:929-936 contains Mac ARM64/Linux ARM64/Python versions, technical matrix6/6 PASS and release acceptance open as card claims, which cannot be independently verified within read-only scope. → support=**full**
+
+**Uncertainties-3**: K1:947-948 states browser extra security work is separate, K1:937-938 states remote CI is absent, and K1:951-952 states the existing lock resolves in a clean environment, visible in the cited range but unverifiable in read-only review. → support=**full**
+
+**Method-1**: K2:69 calls _exercise(state), K2:79 defines _exercise, K2:43 defines _require, and all _require calls in K3 are visible in the cited ranges. → support=**full**
+
+**Method-2**: The entire K4 file was read, with import target (11-13), positive assertions (17-22) and parametrized negative cases (25-50) visible in the cited range, and fixture used in a context equivalent to pytest parametrization. → support=**full**
+
+**Method-3**: K1:925-957 contains the full RC-OSS-005 card text, compared with script steps in Findings-1..8. → support=**full**
+
+FastAPI is equivalent to the lowercase fastapi package; fixture is contextual pytest parametrization terminology.
+
+## REQUIREMENTS
+
+R1-R19 content requirements are satisfied; R20-R21 process requirements are report_outside. All report elements comply with R18/R19 prohibitions on counts, PASS and closure claims. All g1.1-g3.6 task requirements are satisfied. The 3 lines phrase in g2.1 is omitted to comply with R18, while Findings-11 fully states the substance of the assertions: package names, hashes and no playwright.
+
+```json
+{
+  "revision": "7304bdb4a87476e70a3e101780623b16f4b769b5231e1dc171a3e2308f90b183",
+  "verdict": "PASS",
+  "acceptance": [
+    {
+      "id": "request",
+      "status": "PASS",
+      "evidence": "The report reviews only scripts/release_smoke.py, tests/unit/test_release_smoke_client.py and the RC-OSS-005 card slice read-only, covering the request through Findings, Uncertainties and Method."
+    },
+    {
+      "id": "evidence",
+      "status": "PASS",
+      "evidence": "Four file:line references K1-K4 are used, below evidence_limit 5, with no command evidence (qa.counter.command_sample=0)."
+    },
+    {
+      "id": "scope",
+      "status": "PASS",
+      "evidence": "Only the three files in source_read_paths were read, not docs/reviews/**, with no script/test execution, installation, network requests or PASS claims."
+    },
+    {
+      "id": "task:g1",
+      "status": "PASS",
+      "evidence": "release_smoke.py steps are cataloged with K2/K3 in Findings-1..8, omitted steps are listed separately in Uncertainties, and the migration comparison appears in Findings-9."
+    },
+    {
+      "id": "task:g2",
+      "status": "PASS",
+      "evidence": "The import target export_smoke_client.py is documented in Findings-10 with K4, positive assertions (certifi/httpcore/httpx, sha256, no playwright) in Findings-11, and negative cases (missing/duplicate/no-wheel/bad-hash, ValueError) in Findings-12, with no direct release_smoke.py execution stated in Findings-10."
+    },
+    {
+      "id": "task:g3",
+      "status": "PASS",
+      "evidence": "Findings documents steps beyond migrations using K2/K3 and states that the test targets export_smoke_client.py, while Uncertainties states clean installation, update, rollback, platform matrix and release acceptance are unverified, RC-OSS-005 remains PROCEED, four evidence references are used, and no totals are given."
+    }
+  ],
+  "poll": [
+    {
+      "id": "K1",
+      "outcome": "verified",
+      "evidence": "06_PRODUCT_BACKLOG.md:924-957 (backlog.text): the RC-OSS-005 heading is at line 925, PROCEED at 929, and the claim that it tests more than migrations with the #21/#22 DB initialization proposal at 953-954."
+    },
+    {
+      "id": "K2",
+      "outcome": "verified",
+      "evidence": "scripts/release_smoke.py:1-200: _NoBrowser (27), _no_dns (40), main() TemporaryDirectory/os.environ/cwd (48-76), _exercise() load_migrations/initialize (79-139), Adapter/Transport (141-183), collect_source (200-208) occur verbatim."
+    },
+    {
+      "id": "K3",
+      "outcome": "verified",
+      "evidence": "scripts/release_smoke.py:201-305: collect_source _require check (206-208), eligible_rows (221), process_observed_items (230-237), TestClient /items /items/{id} /static/app.js (253-268), sqlite3 backup (269-278), reopen (279-281) and restore checksum/listing/config checks (283-305) occur verbatim."
+    },
+    {
+      "id": "K4",
+      "outcome": "verified",
+      "evidence": "The test at tests/unit/test_release_smoke_client.py:1-50 imports export_client through runpy.run_path from export_smoke_client.py (11-13), checks certifi/httpcore/httpx, sha256 and no playwright (17-22), and parametrizes missing/duplicate/no-wheel/bad-hash with ValueError (25-50)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "Findings-1",
+      "support": "full",
+      "terms": [
+        {
+          "term": "_NoBrowser",
+          "status": "negative"
+        },
+        {
+          "term": "MetaPathFinder",
+          "status": "negative"
+        },
+        {
+          "term": "DNS",
+          "status": "negative"
+        }
+      ],
+      "rationale": "K2:27-28 defines _NoBrowser(MetaPathFinder), K2:40 defines _no_dns, and K2:49-50 inserts sys.meta_path and assigns socket.getaddrinfo = _no_dns at main() entry, all visible verbatim in the cited range."
+    },
+    {
+      "id": "Findings-2",
+      "support": "full",
+      "terms": [],
+      "rationale": "K2:51 TemporaryDirectory, K2:53-62 DB/settings paths in os.environ.update, K2:67-68 os.chdir(state) and K2:71-72 finally: os.chdir(previous_cwd) occur verbatim in the cited range."
+    },
+    {
+      "id": "Findings-3",
+      "support": "full",
+      "terms": [
+        {
+          "term": "load_migrations",
+          "status": "negative"
+        }
+      ],
+      "rationale": "K2:102 imports Database/load_migrations, K2:137 calls tuple(load_migrations()), K2:138 checks initialize()==expected and K2:139 checks idempotence through initialize()==(), all visible in the cited range."
+    },
+    {
+      "id": "Findings-4",
+      "support": "full",
+      "terms": [
+        {
+          "term": "collect_source",
+          "status": "negative"
+        },
+        {
+          "term": "_require",
+          "status": "negative"
+        }
+      ],
+      "rationale": "K2:95 imports collect_source, K2:141-173 defines Adapter, K2:175-183 defines Transport, K2:200 calls result = collect_source( and K2:206-208 checks _require(result.status==success...), all visible in the cited range."
+    },
+    {
+      "id": "Findings-5",
+      "support": "full",
+      "terms": [
+        {
+          "term": "eligible_rows",
+          "status": "negative"
+        },
+        {
+          "term": "process_observed_items",
+          "status": "negative"
+        },
+        {
+          "term": "_require",
+          "status": "negative"
+        }
+      ],
+      "rationale": "K3:221 eligible_rows([row], config, reader=reader), K3:230/233 process_observed_items and K3:236-237 _require(not outcome.failures and len(outcome.processed)==1) occur verbatim in the cited range."
+    },
+    {
+      "id": "Findings-6",
+      "support": "full",
+      "terms": [
+        {
+          "term": "FastAPI",
+          "status": "equivalent"
+        }
+      ],
+      "rationale": "K3:84 imports TestClient from fastapi.testclient: FastAPI appears as the lowercase package fastapi, which is equivalent, and K3:257-268 contains the /items, /items/{id} and /static/app.js calls and status_code==200 checks."
+    },
+    {
+      "id": "Findings-7",
+      "support": "full",
+      "terms": [
+        {
+          "term": "sqlite3",
+          "status": "negative"
+        }
+      ],
+      "rationale": "K3:270-275 uses sqlite3.connect and live.backup(saved), while K3:279-281 checks reopen through Database(...).initialize()==(), all visible in the cited range."
+    },
+    {
+      "id": "Findings-8",
+      "support": "full",
+      "terms": [
+        {
+          "term": "_require",
+          "status": "negative"
+        }
+      ],
+      "rationale": "K3:285-288 creates the restored directory, K3:289-291 checks Database(restored...).initialize()==(), K3:293-295 compares ListingReader listing data and K3:299-301 compares load_user_config, all visible in the cited range."
+    },
+    {
+      "id": "Findings-9",
+      "support": "full",
+      "terms": [
+        {
+          "term": "RC-OSS-005",
+          "status": "negative"
+        }
+      ],
+      "rationale": "K1:925 contains the RC-OSS-005 heading and K1:953-954 states that existing release_smoke.py tests more than migrations and should not be reduced back to DB initialization (#21/#22), visible in the cited range."
+    },
+    {
+      "id": "Findings-10",
+      "support": "full",
+      "terms": [
+        {
+          "term": "export_client",
+          "status": "negative"
+        }
+      ],
+      "rationale": "K4:11-13 imports runpy.run_path(...scripts/export_smoke_client.py)[export_client], with no release_smoke.py import, so the test does not directly run release_smoke.py."
+    },
+    {
+      "id": "Findings-11",
+      "support": "full",
+      "terms": [
+        {
+          "term": "export_client",
+          "status": "negative"
+        },
+        {
+          "term": "sha256",
+          "status": "negative"
+        }
+      ],
+      "rationale": "K4:18 calls export_client(ROOT/uv.lock), K4:20 asserts certifi/httpcore/httpx, K4:21 asserts sha256 hashes and K4:22 asserts no playwright, all visible in the cited range."
+    },
+    {
+      "id": "Findings-12",
+      "support": "full",
+      "terms": [
+        {
+          "term": "export_client",
+          "status": "negative"
+        },
+        {
+          "term": "ValueError",
+          "status": "negative"
+        },
+        {
+          "term": "fixture",
+          "status": "context"
+        }
+      ],
+      "rationale": "K4:25 parametrizes missing/duplicate/no-wheel/bad-hash and K4:49 uses pytest.raises(ValueError), visible in the cited range, with fixture used in the pytest parametrization context."
+    },
+    {
+      "id": "Uncertainties-1",
+      "support": "full",
+      "terms": [
+        {
+          "term": "PROCEED",
+          "status": "negative"
+        }
+      ],
+      "rationale": "K1:929 states Status: PROCEED and K1:943-944 states the full card was not closed, visible in the cited range, while unverifiable clean installation/update/rollback is a legitimate limit of read-only review."
+    },
+    {
+      "id": "Uncertainties-2",
+      "support": "full",
+      "terms": [],
+      "rationale": "K1:929-936 contains Mac ARM64/Linux ARM64/Python versions, technical matrix6/6 PASS and release acceptance open as card claims, which cannot be independently verified within read-only scope."
+    },
+    {
+      "id": "Uncertainties-3",
+      "support": "full",
+      "terms": [],
+      "rationale": "K1:947-948 states browser extra security work is separate, K1:937-938 states remote CI is absent, and K1:951-952 states the existing lock resolves in a clean environment, visible in the cited range but unverifiable in read-only review."
+    },
+    {
+      "id": "Method-1",
+      "support": "full",
+      "terms": [
+        {
+          "term": "_exercise",
+          "status": "negative"
+        },
+        {
+          "term": "_require",
+          "status": "negative"
+        }
+      ],
+      "rationale": "K2:69 calls _exercise(state), K2:79 defines _exercise, K2:43 defines _require, and all _require calls in K3 are visible in the cited ranges."
+    },
+    {
+      "id": "Method-2",
+      "support": "full",
+      "terms": [
+        {
+          "term": "fixture",
+          "status": "context"
+        }
+      ],
+      "rationale": "The entire K4 file was read, with import target (11-13), positive assertions (17-22) and parametrized negative cases (25-50) visible in the cited range, and fixture used in a context equivalent to pytest parametrization."
+    },
+    {
+      "id": "Method-3",
+      "support": "full",
+      "terms": [
+        {
+          "term": "RC-OSS-005",
+          "status": "negative"
+        }
+      ],
+      "rationale": "K1:925-957 contains the full RC-OSS-005 card text, compared with script steps in Findings-1..8."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "R1",
+      "status": "satisfied",
+      "report": [
+        "Findings-1",
+        "Findings-2",
+        "Findings-3",
+        "Findings-4",
+        "Findings-5",
+        "Findings-6",
+        "Findings-7",
+        "Findings-8",
+        "Findings-9",
+        "Findings-10",
+        "Findings-11",
+        "Findings-12",
+        "Uncertainties-1",
+        "Uncertainties-2",
+        "Uncertainties-3",
+        "Method-1",
+        "Method-2",
+        "Method-3"
+      ],
+      "rationale": "All report elements cover only the three specified files."
+    },
+    {
+      "id": "R2",
+      "status": "report_outside",
+      "report": [],
+      "rationale": "Process criterion: source remained unchanged during the read-only review."
+    },
+    {
+      "id": "R3",
+      "status": "satisfied",
+      "report": [
+        "Findings-2"
+      ],
+      "rationale": "Findings-2 explains temporary directory and environment variable setup for DB/settings paths."
+    },
+    {
+      "id": "R4",
+      "status": "satisfied",
+      "report": [
+        "Findings-2"
+      ],
+      "rationale": "Findings-2 explains the cwd change and restoration in finally."
+    },
+    {
+      "id": "R5",
+      "status": "satisfied",
+      "report": [
+        "Findings-1"
+      ],
+      "rationale": "Findings-1 explains _NoBrowser MetaPathFinder and the socket.getaddrinfo monkeypatch."
+    },
+    {
+      "id": "R6",
+      "status": "satisfied",
+      "report": [
+        "Findings-3",
+        "Findings-7",
+        "Findings-8"
+      ],
+      "rationale": "Findings-3 explains migration calls and conditions, Findings-7 same-version reopen, and Findings-8 post-restore checksum/data/config checks."
+    },
+    {
+      "id": "R7",
+      "status": "satisfied",
+      "report": [
+        "Findings-4",
+        "Findings-5"
+      ],
+      "rationale": "Findings-4 explains collect_source and its _require check, while Findings-5 explains evaluation through eligible_rows and process_observed_items."
+    },
+    {
+      "id": "R8",
+      "status": "satisfied",
+      "report": [
+        "Findings-6"
+      ],
+      "rationale": "Findings-6 explains TestClient checks for /items, /items/{id} and /static/app.js."
+    },
+    {
+      "id": "R9",
+      "status": "satisfied",
+      "report": [
+        "Findings-7",
+        "Findings-8"
+      ],
+      "rationale": "Findings-7 explains backup and same-version reopen, while Findings-8 explains post-restore checksum/data/config checks."
+    },
+    {
+      "id": "R10",
+      "status": "satisfied",
+      "report": [
+        "Findings-10"
+      ],
+      "rationale": "Findings-10 explains the runpy import from export_smoke_client.py without directly running release_smoke.py."
+    },
+    {
+      "id": "R11",
+      "status": "satisfied",
+      "report": [
+        "Findings-11"
+      ],
+      "rationale": "Findings-11 concretely states the certifi/httpcore/httpx, sha256 hash and no-playwright assertions."
+    },
+    {
+      "id": "R12",
+      "status": "satisfied",
+      "report": [
+        "Findings-12"
+      ],
+      "rationale": "Findings-12 concretely states expected ValueError for missing/duplicate/no-wheel/bad-hash cases."
+    },
+    {
+      "id": "R13",
+      "status": "satisfied",
+      "report": [
+        "Findings-9",
+        "Findings-3",
+        "Findings-4",
+        "Findings-5",
+        "Findings-6",
+        "Findings-7",
+        "Findings-8"
+      ],
+      "rationale": "Findings-9 quotes the card claim and compares it with the non-migration steps shown in Findings-3..8."
+    },
+    {
+      "id": "R14",
+      "status": "satisfied",
+      "report": [
+        "Uncertainties-2"
+      ],
+      "rationale": "Uncertainties-2 explicitly attributes the platform matrix and release acceptance to the card."
+    },
+    {
+      "id": "R15",
+      "status": "satisfied",
+      "report": [
+        "Uncertainties-1",
+        "Uncertainties-2",
+        "Uncertainties-3"
+      ],
+      "rationale": "Uncertainties-1 marks clean installation/update/rollback unverified, Uncertainties-2 platform matrix/release acceptance, and Uncertainties-3 lock resolution/browser/remote CI."
+    },
+    {
+      "id": "R16",
+      "status": "satisfied",
+      "report": [
+        "Uncertainties-1"
+      ],
+      "rationale": "Uncertainties-1 states that the card is PROCEED."
+    },
+    {
+      "id": "R17",
+      "status": "satisfied",
+      "report": [
+        "qa.counter"
+      ],
+      "rationale": "qa.counter: evidence=4 (≤5), command_sample=0, with no command evidence."
+    },
+    {
+      "id": "R18",
+      "status": "satisfied",
+      "report": [
+        "Findings-1",
+        "Findings-2",
+        "Findings-3",
+        "Findings-4",
+        "Findings-5",
+        "Findings-6",
+        "Findings-7",
+        "Findings-8",
+        "Findings-9",
+        "Findings-10",
+        "Findings-11",
+        "Findings-12",
+        "Uncertainties-1",
+        "Uncertainties-2",
+        "Uncertainties-3",
+        "Method-1",
+        "Method-2",
+        "Method-3"
+      ],
+      "rationale": "Neither the report nor any report element contains test totals, counts or N tests/N items statements."
+    },
+    {
+      "id": "R19",
+      "status": "satisfied",
+      "report": [
+        "Findings-1",
+        "Findings-2",
+        "Findings-3",
+        "Findings-4",
+        "Findings-5",
+        "Findings-6",
+        "Findings-7",
+        "Findings-8",
+        "Findings-9",
+        "Findings-10",
+        "Findings-11",
+        "Findings-12",
+        "Uncertainties-1",
+        "Uncertainties-2",
+        "Uncertainties-3",
+        "Method-1",
+        "Method-2",
+        "Method-3"
+      ],
+      "rationale": "The report contains no script/test execution PASS or card closure claims, and states RC-OSS-005 is PROCEED."
+    },
+    {
+      "id": "R20",
+      "status": "report_outside",
+      "report": [],
+      "rationale": "Process criterion: this review itself is the independent read-only final review."
+    },
+    {
+      "id": "R21",
+      "status": "report_outside",
+      "report": [],
+      "rationale": "Process criterion: execution stays within fixed budget/duration limits."
+    },
+    {
+      "id": "g1.1",
+      "status": "satisfied",
+      "report": [
+        "Findings-1",
+        "Findings-2",
+        "Findings-3",
+        "Findings-4",
+        "Findings-5",
+        "Findings-6",
+        "Findings-7",
+        "Findings-8"
+      ],
+      "rationale": "Every step is reported with K2 or K3 file:line evidence."
+    },
+    {
+      "id": "g1.2",
+      "status": "satisfied",
+      "report": [
+        "Uncertainties-1",
+        "Uncertainties-2"
+      ],
+      "rationale": "Uncertainties-1 lists update/rollback and clean installation, and Uncertainties-2 platform matrix, separately as steps the script does not perform."
+    },
+    {
+      "id": "g1.3",
+      "status": "satisfied",
+      "report": [
+        "Findings-9",
+        "Findings-3",
+        "Findings-4",
+        "Findings-5",
+        "Findings-6",
+        "Findings-7",
+        "Findings-8"
+      ],
+      "rationale": "Findings-9 quotes the card claim and compares it with the non-migration steps."
+    },
+    {
+      "id": "g2.1",
+      "status": "satisfied",
+      "report": [
+        "Findings-10",
+        "Findings-11",
+        "Findings-12"
+      ],
+      "rationale": "Findings-10 gives the import target, Findings-11 positive assertions (certifi/httpcore/httpx, sha256, no playwright), and Findings-12 negative cases (missing/duplicate/no-wheel/bad-hash, ValueError) with file:line evidence, while the 3 lines statement is omitted to follow R18 and the substance of the assertions is complete."
+    },
+    {
+      "id": "g3.1",
+      "status": "satisfied",
+      "report": [
+        "Findings-9",
+        "Findings-4",
+        "Findings-5",
+        "Findings-6",
+        "Findings-7",
+        "Findings-8"
+      ],
+      "rationale": "Non-migration collect (Findings-4), evaluate (Findings-5), dashboard/static (Findings-6), reopen (Findings-7) and restore (Findings-8) steps are shown with K1-K4 evidence."
+    },
+    {
+      "id": "g3.2",
+      "status": "satisfied",
+      "report": [
+        "Findings-10"
+      ],
+      "rationale": "Findings-10 explicitly states that the test targets export_smoke_client.py rather than release_smoke.py."
+    },
+    {
+      "id": "g3.3",
+      "status": "satisfied",
+      "report": [
+        "Uncertainties-1",
+        "Uncertainties-2",
+        "Uncertainties-3"
+      ],
+      "rationale": "Uncertainties-1 marks clean installation/update/rollback unverified, Uncertainties-2 platform matrix/release acceptance, and Uncertainties-3 lock/browser/CI."
+    },
+    {
+      "id": "g3.4",
+      "status": "satisfied",
+      "report": [
+        "Uncertainties-1"
+      ],
+      "rationale": "Uncertainties-1 states that the card is PROCEED."
+    },
+    {
+      "id": "g3.5",
+      "status": "satisfied",
+      "report": [
+        "qa.counter"
+      ],
+      "rationale": "qa.counter: evidence=4, below the limit of at most 5."
+    },
+    {
+      "id": "g3.6",
+      "status": "satisfied",
+      "report": [
+        "Findings-1",
+        "Findings-2",
+        "Findings-3",
+        "Findings-4",
+        "Findings-5",
+        "Findings-6",
+        "Findings-7",
+        "Findings-8",
+        "Findings-9",
+        "Findings-10",
+        "Findings-11",
+        "Findings-12",
+        "Uncertainties-1",
+        "Uncertainties-2",
+        "Uncertainties-3",
+        "Method-1",
+        "Method-2",
+        "Method-3"
+      ],
+      "rationale": "No report element contains numerical test totals or counts."
+    }
+  ],
+  "decisions": [],
+  "assumptions": [
+    {
+      "id": "A1",
+      "choice": "The report’s qa.counter is used for evidence count and command checks in R17/g3.5",
+      "reason": "qa.counter is part of the report delivery and is the sole reliable source for mechanical evidence counts"
+    },
+    {
+      "id": "A2",
+      "choice": "The 3 lines phrase in g2.1 is omitted because it conflicts with the R18 count ban, which is compliance rather than an omission",
+      "reason": "The R18 content criterion forbids counts, the 3 lines phrase in g2.1 is indicative, and Findings-11 preserves the substance of the assertions"
+    }
+  ]
+}
+```
+
+**VERDICT: PASS** — All probes verified, all claims fully supported, all content requirements satisfied by report elements.

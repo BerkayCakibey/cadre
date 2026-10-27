@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# cadre-cancel [project|RUN_ID] — permanent cancel (C7). Without arguments: leaves a flag on ALL active recorded runs.
+# RATIONALE: the user interface is `cadre`; this script is for the OPERATOR AI (Claude) — used for background interventions.
+# Cancel = runs/<id>/cancel.flag (the engine reads it on every tick, while waiting for a slot/model and between dispatcher tasks).
+QE="${CADRE_HOME:-$HOME/.local/share/cadre-engineering}"
+CADRE_ENGINE_ROOT="${CADRE_ENGINE_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+if [ -n "${1:-}" ]; then
+  python3 "$CADRE_ENGINE_ROOT/lib/run_store.py" cancel "$1" || exit 1
+  exit 0
+fi
+IDS="$(python3 "$CADRE_ENGINE_ROOT/lib/run_store.py" cancel-all)" || exit 1
+if [ -n "$IDS" ]; then
+  printf 'CANCEL: %s\n' $IDS
+  echo "Running tasks stop within one tick (60 s) at the latest; the half-finished product stays in the worktree."
+  exit 0
+fi
+echo "No running job — nothing to cancel."; exit 0

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Chain wrapper: keep the repository's own commit-msg hook active in AI
+# worktrees. Read the repo's OWN hooksPath at --local scope (excludes our
+# --worktree override, so no recursion).
+set -u
+orig=""
+lhp="$(git config --local core.hooksPath 2>/dev/null || true)"
+if [ -n "$lhp" ]; then
+  case "$lhp" in
+    /*) orig="$lhp/commit-msg" ;;
+    *)  orig="$(git rev-parse --show-toplevel 2>/dev/null)/$lhp/commit-msg" ;;
+  esac
+else
+  cdir="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+  [ -n "$cdir" ] && orig="$cdir/hooks/commit-msg"
+fi
+if [ -n "$orig" ] && [ -x "$orig" ]; then
+  # Never chain into OURSELF. The --local read assumes the cadre hooksPath is set
+  # at --worktree scope; if anything sets it at --local scope instead, `orig`
+  # resolves to this very file and `exec` spins forever — a plain `git commit`
+  # then hangs with no output. Seen live.
+  self="$(cd "$(dirname "$0")" 2>/dev/null && pwd -P)/$(basename "$0")"
+  that="$(cd "$(dirname "$orig")" 2>/dev/null && pwd -P)/$(basename "$orig")"
+  [ "$self" = "$that" ] || exec "$orig" "$@"
+fi
+exit 0

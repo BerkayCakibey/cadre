@@ -1,0 +1,42 @@
+{
+ "status": "PASS",
+ "reason": "command-result",
+ "kind": "project",
+ "command": "~/.local/share/cadre-engineering/projects/feedloom/public-source/.venv/bin/python -m ruff format --check src/feedloom/adapters/open_apis.py tests/unit/test_open_api_adapters.py && ~/.local/share/cadre-engineering/projects/feedloom/public-source/.venv/bin/python -m ruff check src/feedloom/adapters/open_apis.py tests/unit/test_open_api_adapters.py && ~/.local/share/cadre-engineering/projects/feedloom/public-source/.venv/bin/python -m basedpyright --venvpath ~/.local/share/cadre-engineering/projects/feedloom/public-source src/feedloom/adapters/open_apis.py tests/unit/test_open_api_adapters.py && ~/.local/share/cadre-engineering/projects/feedloom/public-source/.venv/bin/python -m pytest -q -o addopts= tests/unit/test_open_api_adapters.py",
+ "product": {
+  "binding": [
+   "~/.local/share/cadre-engineering/worktrees/feedloom/request-a4d1c115546a1497efbb2b40928de70f/src"
+  ],
+  "modules": {
+   "feedloom.adapters.open_apis": {
+    "expected": "~/.local/share/cadre-engineering/worktrees/feedloom/request-a4d1c115546a1497efbb2b40928de70f/src/feedloom/adapters/open_apis.py",
+    "path": "~/.local/share/cadre-engineering/worktrees/feedloom/request-a4d1c115546a1497efbb2b40928de70f/src/feedloom/adapters/open_apis.py",
+    "status": "PASS"
+   }
+  },
+  "status": "PASS",
+  "reason": "qa-product-verified"
+ },
+ "discovery": {
+  "scope": "targeted",
+  "status": "PASS",
+  "reason": "qa-discovery-verified",
+  "expected_files": [
+   "tests/unit/test_open_api_adapters.py"
+  ],
+  "observed_files": [
+   "tests/unit/test_open_api_adapters.py"
+  ],
+  "collected": 396,
+  "executed": 396,
+  "skipped": 0,
+  "failed": []
+ },
+ "attempts": [
+  {
+   "status": "PASS",
+   "exit_code": 0,
+   "seconds": 5.738913059234619
+  }
+ ]
+}

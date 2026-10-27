@@ -1,0 +1,78 @@
+{
+ "opencode-go": {
+  "id": "opencode-go",
+  "models": {
+   "deepseek-v4-pro": {
+    "id": "deepseek-v4-pro",
+    "name": "DeepSeek V4 Pro (New)",
+    "limit": {
+     "context": 1000000,
+     "output": 384000
+    },
+    "cost": {
+     "input": 0.66,
+     "output": 1.98,
+     "cache_read": 0.022
+    },
+    "tool_call": true,
+    "reasoning": true
+   },
+   "kimi-k3": {
+    "id": "kimi-k3",
+    "name": "Kimi K3",
+    "limit": {
+     "context": 1048576,
+     "output": 131072
+    },
+    "cost": {
+     "input": 3,
+     "output": 15,
+     "cache_read": 0.3
+    },
+    "tool_call": true,
+    "reasoning": true
+   }
+  }
+ },
+ "openrouter": {
+  "id": "openrouter",
+  "models": {
+   "deepseek/deepseek-v4-pro": {
+    "id": "deepseek/deepseek-v4-pro",
+    "name": "DeepSeek V4 Pro",
+    "limit": {
+     "context": 1048576,
+     "output": 384000
+    },
+    "cost": {
+     "input": 0.2088,
+     "output": 0.4176,
+     "cache_read": 0.0174
+    },
+    "tool_call": true,
+    "reasoning": true
+   }
+  }
+ },
+ "deepseek": {
+  "id": "deepseek",
+  "models": {
+   "deepseek-v4-pro": {
+    "id": "deepseek-v4-pro",
+    "name": "DeepSeek V4 Pro",
+    "limit": {
+     "context": 1000000,
+     "output": 393216
+    },
+    "cost": {
+     "input": 0.66,
+     "output": 1.98,
+     "reasoning": 1.98,
+     "cache_read": 0.022
+    },
+    "tool_call": true,
+    "reasoning": true
+   }
+  }
+ }
+}
