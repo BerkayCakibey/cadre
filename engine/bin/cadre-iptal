@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# cadre-iptal [project|RUN_ID] — permanent cancel (C7). Without arguments: leaves a flag on ALL active recorded runs.
+# RATIONALE: the user interface is `cadre`; this script is for the OPERATOR AI (Claude) — used for background interventions.
+# Cancel = runs/<id>/cancel.flag (the engine reads it on every tick, while waiting for a slot/model and between dispatcher tasks).
+QE="${CADRE_HOME:-$HOME/.local/share/cadre-engineering}"
+CADRE_ENGINE_ROOT="${CADRE_ENGINE_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+if [ -n "${1:-}" ]; then
+  python3 "$CADRE_ENGINE_ROOT/lib/kosu.py" cancel "$1" || exit 1
+  exit 0
+fi
+IDS="$(python3 "$CADRE_ENGINE_ROOT/lib/kosu.py" cancel-all)" || exit 1
+if [ -n "$IDS" ]; then
+  printf 'IPTAL: %s\n' $IDS
+  echo "Kosan gorevler en gec bir tik (60 sn) icinde durur; yarim urun worktree'de kalir."
+  exit 0
+fi
+echo "Kosan is yok — iptal edilecek bir sey bulunamadi."; exit 0

@@ -1,0 +1,233 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "build": {
+      "permission": {
+        "edit": {
+          "*": "allow",
+          "**/.git/**": "deny",
+          "**/.opencode/**": "deny",
+          "**/opencode.json": "deny",
+          "**/opencode.jsonc": "deny",
+          "~/.local/share/cadre-engineering/**": "deny",
+          "~/.config/opencode/**": "deny"
+        },
+        "webfetch": "deny",
+        "websearch": "deny",
+        "external_directory": {
+          "*": "deny",
+          "~/.local/share/cadre-engineering/**": "allow"
+        },
+        "doom_loop": "allow",
+        "read": {
+          "**/.env": "deny",
+          "**/.env.*": "deny",
+          "**/*.pem": "deny",
+          "**/*.key": "deny",
+          "**/id_rsa*": "deny",
+          "**/id_ed25519*": "deny",
+          "**/credentials*": "deny",
+          "~/.ssh/**": "deny",
+          "~/.aws/**": "deny",
+          "**/.env.example": "allow",
+          "**/.env.sample": "allow",
+          "**/.env.template": "allow"
+        },
+        "bash": {
+          "git push --force*": "deny",
+          "git push -f*": "deny",
+          "git push * --force*": "deny",
+          "git push origin +*": "deny",
+          "git * --no-verify*": "deny",
+          "git -c *": "deny",
+          "git -C *": "deny",
+          "git --git-dir*": "deny",
+          "git --work-tree*": "deny",
+          "git config *hooksPath*": "deny",
+          "git config *core.worktree*": "deny",
+          "git worktree *": "deny",
+          "git remote add*": "deny",
+          "git remote set-url*": "deny",
+          "git reset --hard*": "deny",
+          "git clean -f*": "deny",
+          "git branch -D *": "deny",
+          "git rebase*": "deny",
+          "sudo *": "deny",
+          "dd *": "deny",
+          "mkfs*": "deny",
+          "rm -rf /*": "deny",
+          "rm -rf ~*": "deny",
+          "rm -rf*": "deny",
+          "rm -r*": "deny",
+          "rm --recursive*": "deny",
+          "rsync --delete*": "deny",
+          "rsync * --delete*": "deny",
+          "ssh *": "ask",
+          "scp *": "ask",
+          "rsync *": "ask",
+          "*deploy_release.sh*": "ask",
+          "*deploy_permissions.sh*": "ask",
+          "kubectl *": "ask",
+          "terraform *": "ask",
+          "aws *": "ask",
+          "gcloud *": "ask",
+          "cat *.env": "deny",
+          "cat *.env.*": "deny",
+          "cat *id_rsa*": "deny",
+          "cat *.pem": "deny",
+          "*.env": "deny",
+          "*.env.*": "deny",
+          "*/.env*": "deny",
+          "*id_rsa*": "deny",
+          "*id_ed25519*": "deny",
+          "*.pem*": "deny",
+          "*.key*": "deny",
+          "*credentials*": "deny",
+          "*.ssh/*": "deny",
+          "cat *.env.example": "deny",
+          "*.env.example*": "deny",
+          "*.env.sample*": "deny",
+          "*.env.template*": "deny"
+        }
+      }
+    },
+    "cadre-plan": {
+      "permission": {}
+    },
+    "cadre-review": {
+      "permission": {}
+    },
+    "cadre-impl": {
+      "permission": {}
+    },
+    "compaction": {}
+  },
+  "compaction": {
+    "auto": true,
+    "prune": false,
+    "preserve_recent_tokens": 16384,
+    "reserved": 8192
+  },
+  "tool_output": {
+    "max_lines": 5000,
+    "max_bytes": 49152
+  },
+  "permission": {
+    "external_directory": {
+      "*": "deny",
+      "~/.local/share/cadre-engineering/**": "allow"
+    },
+    "read": {
+      "**/.env": "deny",
+      "**/.env.*": "deny",
+      "**/*.pem": "deny",
+      "**/*.key": "deny",
+      "**/id_rsa*": "deny",
+      "**/id_ed25519*": "deny",
+      "**/credentials*": "deny",
+      "~/.ssh/**": "deny",
+      "~/.aws/**": "deny",
+      "~/.kube/**": "deny",
+      "~/.config/gcloud/**": "deny",
+      "**/.env.example": "allow",
+      "**/.env.sample": "allow",
+      "**/.env.template": "allow"
+    },
+    "bash": {
+      "git push --force*": "deny",
+      "git push -f*": "deny",
+      "git push * --force*": "deny",
+      "git push origin +*": "deny",
+      "git reset --hard*": "deny",
+      "git clean -f*": "deny",
+      "git branch -D *": "deny",
+      "sudo *": "deny",
+      "rm -rf*": "deny",
+      "rm -r*": "deny",
+      "rm --recursive*": "deny",
+      "dd *": "deny",
+      "mkfs*": "deny",
+      "rsync --delete*": "deny",
+      "rsync * --delete*": "deny",
+      "cat *.env": "deny",
+      "cat *.env.*": "deny",
+      "cat *id_rsa*": "deny",
+      "cat *.pem": "deny",
+      "cat *.env.example": "deny"
+    },
+    "webfetch": "deny",
+    "websearch": "deny"
+  },
+  "provider": {
+    "opencode": {
+      "name": "OpenCode Zen/Go",
+      "options": {}
+    },
+    "openrouter": {
+      "models": {
+        "deepseek/deepseek-v4-pro": {
+          "options": {
+            "provider": {
+              "order": [
+                "streamlake/fp8",
+                "deepinfra/fp8"
+              ],
+              "only": [
+                "streamlake/fp8",
+                "deepinfra/fp8"
+              ],
+              "quantizations": [
+                "fp8"
+              ],
+              "require_parameters": true,
+              "allow_fallbacks": false
+            }
+          }
+        },
+        "deepseek/deepseek-v4-flash": {
+          "options": {
+            "provider": {
+              "order": [
+                "streamlake/fp8",
+                "deepinfra/fp8"
+              ],
+              "only": [
+                "streamlake/fp8",
+                "deepinfra/fp8"
+              ],
+              "quantizations": [
+                "fp8"
+              ],
+              "require_parameters": true,
+              "allow_fallbacks": false
+            }
+          }
+        },
+        "z-ai/glm-5.3": {
+          "options": {
+            "provider": {
+              "quantizations": [
+                "fp8"
+              ],
+              "require_parameters": true,
+              "allow_fallbacks": false
+            }
+          }
+        },
+        "qwen/qwen3.8-max-0902": {
+          "options": {
+            "provider": {
+              "only": [
+                "alibaba"
+              ],
+              "allow_fallbacks": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "plugin": [
+    "file://{env:HOME}/.local/share/cadre-engineering/lib/cadre-plugin.mjs"
+  ]
+}

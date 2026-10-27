@@ -1,0 +1,18 @@
+{
+ "submission_id": "4c96306167dc42b28a977b6cea3ce669",
+ "project": "feedloom",
+ "target_path": "~/.local/share/cadre-engineering/worktrees/feedloom/codex-code25-source",
+ "target_kind": "existing",
+ "input_mode": "goal",
+ "output": "Fallback URL behaviour from a verified raw id in the AlphaFeed adapter, tests that lock it, and real QA/acceptance evidence for only the two related files",
+ "acceptance": "ID CHECKS (bound explicitly): no sourceUrl + no id or a bool id -> rejected, candidate None (existing behaviour kept); no sourceUrl + an id that is sanitized/hashed (e.g. ../../etc/passwd, token=abcdef123456) -> no fallback URL, rejected, external_id starts with sha256-; sourceUrl missing, null or empty + a verified valid id -> normalized with the https://www.alphafeed.example/items/<id> fallback; the behaviour of records with a sourceUrl and the existing publisher URL assertions do not change; a record without a sourceUrl, null or empty, whose raw id is verified, becomes normalized with the https://www.alphafeed.example/items/<id> fallback, canonical_url and item_key derive from url_identity; the fallback URL is forbidden only in two cases: if _identifier sanitized the id (e.g. ../../etc/passwd, token=abcdef123456) or if external_id matches the ready hash form (^sha256-[0-9a-f]{64}$); raw ids that start with 'sha256-' but are not in hash form (e.g. sha256-public-item, safe according to collectors.safe_external_id) count as verified ids and produce a fallback; with a sanitized or real hash-form id no fallback is produced and the record stays rejected; the plan acceptance text names the request's numbered acceptance items (1)-(6), (4b), (5a), (5b) one by one; the 4th record in the fixture test is updated to the new behaviour, the carried test_betafeed_stops_paginating_on_last_page completion and the other existing tests do not change; parsing the same response twice gives an equal result; only src/feedloom/adapters/open_apis.py and tests/unit/test_open_api_adapters.py change, no new fixture or file; the format, lint and type checks of the two changed files and the tests of the test file really run; no install or download, no whole-package run and no external network call; a separate clean read-only final review is bound to the same product revision; no commit, push, merge, publish or write to the original source; this job's approved total cap and 75 working minutes are not exceeded. Extra criteria: in the null/empty-URL tests the record title matches the query terms; no id and a bool id are tested in separate tests; no fallback URL is produced from a sanitized or real hash-form (^sha256-[0-9a-f]{64}$) id; the (4b) test uses a real 64-hex hash example; the existing sourceUrl behaviour and the BetaFeed test are kept.",
+ "scope_files": "src/feedloom/adapters/open_apis.py,tests/unit/test_open_api_adapters.py",
+ "scope_tests": "tests/unit/test_open_api_adapters.py",
+ "preference": "economic",
+ "difficulty_override": "easy",
+ "duration_minutes": 90,
+ "budget_usd": "3.20",
+ "budget_shares": "seritler=0.55,hakem=0.25,yardimci=0.20",
+ "backlog_path": "",
+ "source_token": ""
+}

@@ -1,0 +1,4 @@
+END THE OUTPUT WITH THESE 3 FIXED LINES (standard form, do not skip):
+WHAT CHANGED: <1 line>
+HOW IT WAS VERIFIED: <command/check, 1 line>
+RISK+REASON: <why you chose the approach + remaining risk, 1 line>

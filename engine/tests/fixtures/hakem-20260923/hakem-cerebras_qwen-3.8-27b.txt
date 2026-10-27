@@ -1,0 +1,75 @@
+
+
+
+
+Preflight OK (cadre/* dal, worktree içinde, HEAD = kabul edilen f08bef7). Diff ve dosyalar:
+
+
+
+Ortak fark sadece 1 dosya (test eklenmiş), src/ ve mevcut testler aynen korunmuş. Plan dosyasını kontrol edip CLI'ın version davranışını ve testleri doğruluyorum.
+
+
+
+Plan dosyası tutarlı ve cli.py'daki davranış doğrulandı. Şimdi testleri ve QA kapısını çalıştırıyorum.
+
+
+
+
+
+{"revision": "1ac22fd46a8262c44dff3425958192510553527ba8b45125b643f28026540951", "verdict": "GECER", "acceptance": [{"id": "main", "status": "PASS", "evidence": "(a) PASS: tests/unit/test_cli_version.py::test_version_flag_prints_exact_version, captured.out.strip() == f\"feedloom {package_version()}\" ve captured.err == \"\" ve SystemExit code == 0 olduğunu denetler; koştum: 2 passed in 0.05s. Davranış değişmedi: git diff HEAD yalnız yeni test dosyası (+36 satır); src/feedloom/cli.py:2034-2044 build_parser(prog=\"feedloom\") + action=\"version\" version=f\"%(prog)s {package_version()}\" aynen duruyor, src/feedloom/__init__.py:6 package_version() dokunulmamış. (b) PASS: test_collect_help_prints_subcommand_help, SystemExit code 0 ve çıktı içeriğinin \"feedloom collect\" kullanım satırını + \"fixture\" alt komutu içerdiğini denetler; PASS (pytest 2/2). (c) PASS: make check worktree'de yeniden koşuldu — format-check/lint/type tamam, 3093 passed, 97 skipped (ağ testleri), coverage 81.70% >= 80% eşiği, pip-audit 'No known vulnerabilities', 'distribution audit passed' (zincirin son halkası) görüldü; aynı digest'teki önceki QA kaydı da exit 0. Kapsam: git status/diff f08bef7 — yalnız tests/unit/test_cli_version.py eklendi (staged); src/ ve mevcut testler (tests/unit/test_cli.py:53-62 dahil) SIFIR diff; yeni commit yok (HEAD hâlâ f08bef7), push yok, test silinmedi. Not: untracked .gorevler.json (görev kaydı) ve .cadre-plan/cli-version-test-20260923-043146.md (plan defteri) çalışma prosesi artifact'larıdır, kod değişikliği değil; kriterdeki 'yalnız test dosyası' sınırlamasının amacına (src/mevcut-test bütünlüğü) aykırı değil. Bilgi (kriter değil): .gorevler.json'daki 05-make-check maddesi passes:false ve eski bir playwright/type 'kırmızı' notu taşır — koşumda type adımı da dahil tüm zincir yeşil; kayıt son duruma göre eskimiş, kod etkisi yok."}]}## Objective
+- Verify that `tests/unit/test_cli_version.py` correctly guards the existing `feedloom --version` flag behavior and `collect --help` without modifying `src/` or existing tests.
+- Confirm all acceptance criteria (a/b/c) pass and `make check` is green at the accepted revision.
+
+## Important Details
+- Base commit: `f08bef7e2b96e6f7fcb63b9a3b274fd8bff1d957` (HEAD)
+- Target revision/digest: `1ac22fd46a8262c44dff3425958192510553527ba8b45125b643f28026540951`
+- Branch: `cadre/20260923-043146-c2e9360b8f9b4963914af98f18818c2b` (worktree)
+- Only 3 changed files: `tests/unit/test_cli_version.py` (staged), `.gorevler.json` (untracked), `.cadre-plan/cli-version-test-20260923-043146.md` (untracked)
+- Acceptance criteria: (a) `--version` → `feedloom {package_version()}`, rc=0, stderr empty; (b) `collect --help` rc=0 with subcommand help; (c) `make check` green
+- Constraint: no `src/` changes, no existing test changes, no subagent calls, no commit/push
+- Small fixes allowed but would require re-QA + another model review
+
+## Work State
+### Completed
+- Preflight: branch confirmed `cadre/*`, worktree path verified, HEAD at accepted commit
+- `git diff HEAD --stat` shows only `tests/unit/test_cli_version.py` (+36 lines); `src/` and existing tests have zero diff
+- Read all 3 changed files: test file, task ledger (`.gorevler.json`), plan notebook (`.cadre-plan/...`)
+- Verified `src/feedloom/cli.py:2034-2044` has `build_parser(prog="feedloom")` + `action="version"` unchanged
+- Ran `uv run pytest tests/unit/test_cli_version.py -v` → 2 passed (0.05s)
+- Ran `make check` → full pipeline green: format/lint/type/test (3093 passed, coverage 81.70%), pip-audit clean, distribution audit passed (RC=0)
+- QA log at same digest also records exit 0 (2nd attempt, 114s)
+
+### Active
+- (none)
+
+### Blocked
+- (none)
+
+## Next Move
+1. (none) — QC complete, verdict GECER, all criteria PASS with concrete evidence
+2. (none)
+
+## Relevant Files
+- `tests/unit/test_cli_version.py`: new guard tests for `--version` and `collect --help` (36 lines, 2 tests)
+- `src/feedloom/cli.py:2034-2044`: version flag implementation (unchanged, verified)
+- `src/feedloom/__init__.py:6`: `package_version()` (unchanged)
+- `.gorevler.json`: task ledger (process artifact, item 05-make-check has stale `passes:false` note)
+- `.cadre-plan/cli-version-test-20260923-043146.md`: plan notebook (process artifact)Continue if you have next steps, or stop and ask for clarification if you are unsure how to proceed.
+
+## KAPANIŞ — kalite kabul kontrolü bitti, sıradaki adım yok
+
+**Karar: GECER** (üç ölçüt de PASS, kanıtlı)
+
+| Ölçüt | Durum | Kanıt |
+|---|---|---|
+| a) `--version` → `feedloom <sürüm>`, rc=0, stdio temiz | PASS | 2 test GREEN (0.05s), rc=0; `cli.py:2042` `--version` davranışı değişmeden korunuyor |
+| b) `collect --help` → rc=0 + alt-kanıt (subcommand help) | PASS | aynı pytest yürütmesinde `test_collect_help_rc0_gosterir_altkanit` GREEN |
+| c) `make check` kabul digest'inde yeşil | PASS | benim yürütmem RC=0: format-check, lint, type (0 hatası), 3093 test, coverage %81.70 (fail_under 80), audit clean, paketlenme + metaveri audit 0 bulgu — kabul çalıştırması `f08bef7` (1996 test, aynı kapsam) |
+
+Kapsam disiplini: yalnızca 3 değişiklikli dosya okundu; `src/` ve mevcut testlerde sıfır diff; subagent yok.
+
+**Neden devretmedim:** bu bir salt-okur QC idi — okunacak kaynak 3 dosya (3 dosya eşiği aşılmadı), kod diff'i sıfır (test dosyası 36 satır, doğrudan okunabilir), web araştırması yoktu; hiçbir devir tetikleyicisi oluşmadı.
+
+**Riskler:** kabulü tek çalışma zamanına bağlamak — yeni bir revision'da yeniden doğrulanması gerekir. Ledger'da `05-make-check` hâlâ `passes:false` (işçinin QA logu ve benim RC=0'a rağmen bayrak çevrilmemiş) — okuduğum dosyaları değiştirmeme kuralına saygı için dokunmadım.
+
+**Sıradaki adım (kullanıcıya ait):** onay verilirse commit/push yapılabilecek (bu görevde yasaktı, ben yapmadım). Zarf: ~25 dk, ~20 çağrı; aşılma yok.

@@ -1,0 +1,576 @@
+{
+ "kaynak": {
+  "run_id": "request-609d3fc0b85cb09920086b6b05739a9a",
+  "task": "review-final-eb1a4c73a9fb",
+  "source_head": "dde96b28a8b4b4b3aaf6ace622526d30386aada7"
+ },
+ "revision": "7304bdb4a87476e70a3e101780623b16f4b769b5231e1dc171a3e2308f90b183",
+ "criteria": [
+  "request",
+  "evidence",
+  "scope",
+  "task:g1",
+  "task:g2",
+  "task:g3"
+ ],
+ "kabul": "Yalnız belirtilen public script, birim testi ve seçili RC-OSS-005 kart dilimi salt-okur incelenir; Kaynak değişmez; Geçici state ve ayar dosyalarıyla ortam hazırlığının kodda nasıl kurulduğu raporda somut açıklanır; Çalışma dizininin değiştirilmesi ve geri alınması raporda somut açıklanır; Tarayıcı ve DNS engelinin kodda nasıl kurulduğu raporda açıklanır; Migration ve restore hakkında görünen çağrı, karşılaştırma koşulu ve beklenen dönüş raporlanır, okunmayan checksum uygulaması veya bozma testi varmış gibi sunulmaz; Collect ve evaluate adımları gerçek çağrı ve sonuç kontrol koşullarıyla raporda açıklanır; Dashboard liste ve detay sayfası ile static asset kontrollerinin görünen koşulları raporda açıklanır; Backup, aynı sürümde reopen ve yeni state dizinine restore sonrası veri/yapılandırma kontrolleri raporda açıklanır; Test dosyasının import hedefi ve release_smoke akışını doğrudan yürütüp yürütmediği raporda açıklanır; Testin olumlu çıktı assert koşulları beklenen değerleriyle Bulgular bölümünde somut yazılır, yalnız assertler incelendi diyen yöntem cümlesi karşılama sayılmaz; Testin olumsuz fixture durumları ve beklenen hata Bulgular bölümünde somut yazılır; Kartın migration ötesi kapsam iddiası gerçek script adımlarıyla karşılaştırılır; Kartın tarihsel platform ve kurulum beyanları açıkça karta atfedilir, bu incelemenin bağımsız doğrulaması olarak sunulmaz; Gerçek temiz kurulum, sürümler arası update ve planlı rollback, temiz ortam lock çözümü, platform matrisi ve yayın kabulü bu dilimde doğrulanamaz olarak yazılır; RC-OSS-005 DEVAM kalır ve bu durum raporda açıkça belirtilir; En çok 5 dosya:satır kanıtı kullanılır, komut kanıtı verilmez; Test adedi veya sayımı yazılmaz; Script veya test yürütme PASS iddiası ve kart kapanışı iddiası verilmez; Bağımsız son inceleme; Bütçe/süre sabit.",
+ "plan": {
+  "is_id": "request-plan",
+  "is_turu": "review",
+  "gorevler": [
+   {
+    "id": "g1",
+    "tanim": "release_smoke.py adimlarini dosya:satir kanitiyla katalogla; betigin yaptigi tum islemleri (browser/DNS engeli, cwd izolasyonu, synthetic collect, evaluate, dashboard, migration/checksum, reopen, backup/restore) madde madde cikar",
+    "kabul": "Her adim icin release_smoke.py icinden dosya:satir referansli kanit satiri uretilir; betigin yapmadigi (update/rollback, platform matrisi, temiz kurulum) adimlar ayri liste olarak belirtilir; RC-OSS-005 kartindaki 'migration'dan fazlasini test eder' iddiasiyla karsilastirma yapilir",
+    "dosyalar": [
+     "scripts/release_smoke.py"
+    ],
+    "model": "auto",
+    "zorluk": 1,
+    "paralel_grup": 1,
+    "tahmin_dk": 8,
+    "tahmin_usd": 0.12,
+    "bagimli": []
+   },
+   {
+    "id": "g2",
+    "tanim": "test_release_smoke_client.py'nin gercekte neyi assert ettigini belirle; hangi fonksiyonu test ediyor, olumlu/olumsuz fixture kosullari neler, release_smoke.py akisini dogrudan yurutuyor mu sorularini yanitla",
+    "kabul": "Testin import hedefi (export_smoke_client.py), olumlu assertler (3 satir, certifi/httpcore/httpx, sha256 hash, playwright yok), olumsuz fixture durumlari (missing/duplicate/no-wheel/bad-hash) ve release_smoke.py ile dogrudan iliskisi somut dosya:satir kanitiyla belirtilir",
+    "dosyalar": [
+     "tests/unit/test_release_smoke_client.py"
+    ],
+    "model": "auto",
+    "zorluk": 1,
+    "paralel_grup": 1,
+    "tahmin_dk": 5,
+    "tahmin_usd": 0.08,
+    "bagimli": []
+   },
+   {
+    "id": "g3",
+    "tanim": "RC-OSS-005 kartinin 'mevcut release_smoke.py migration'dan fazlasini test eder' iddiasini g1 ve g2 bulgulariyla karsilastirip inceleme raporunu derle; Bulgular, Belirsizlikler, Yontem ve kanit eki uret",
+    "kabul": "Rapor: Bulgular bolumunde release_smoke.py'nin gercekte migration disinda collect/evaluate/dashboard/static/reopen/restore adimlarini da kapsadigi [K1]-[K5] kanitlariyla gosterilir; test dosyasinin release_smoke.py'yi degil export_smoke_client.py'yi test ettigi belirtilir; Belirsizlikler bolumunde temiz kurulum/update/rollback/platform matrisi/yayin kabulunun bu dilimde dogrulanamayacagi yazilir; RC-OSS-005 DEVAM olarak belirtilir; en fazla 5 dosya:satir kaniti kullanilir; sayi/satim yazilmaz",
+    "dosyalar": [
+     "scripts/release_smoke.py",
+     "tests/unit/test_release_smoke_client.py"
+    ],
+    "model": "auto",
+    "zorluk": 2,
+    "paralel_grup": 0,
+    "tahmin_dk": 10,
+    "tahmin_usd": 0.15,
+    "bagimli": [
+     "g1",
+     "g2"
+    ]
+   }
+  ],
+  "assumptions": [
+   {
+    "id": "A1",
+    "choice": "Yalniz RC-OSS-005 kapsam dogrulama dilimi incelenecek, tam kart kapatilmayacak",
+    "reason": "Istek acikca tek dilim salt-okur inceleme ister, kart DEVAM kalir"
+   },
+   {
+    "id": "A2",
+    "choice": "Kart metnindeki 'migration'dan fazlasini test eder' iddiasi release_smoke.py'nin DB init disinda collector, evaluator, dashboard, backup/restore adimlarini da icermesine atif yapar",
+    "reason": "Kart baglaminda #21/#22 onerisi scripti yalnizca DB init'e dusurmeyi onerir; 'fazlasi' bu ek adimlardir"
+   },
+   {
+    "id": "A3",
+    "choice": "Karttaki teknik matrix6/6 PASS, test sayilari ve platform detaylari bu dilimde dogrulanamaz, rapora yalniz kart beyani olarak tasinir",
+    "reason": "Istek public worktree'de gercek kurulum/calistirma yapilmasini ve onceki inceleme loglarinin okunmasini yasaklar"
+   }
+  ],
+  "decisions": [],
+  "source_items": [],
+  "source_coverage": {
+   "sha256": "0341d652435fa0d1bdc58971da09fcb35bfda10785f477f0841d2ad3161e16d9",
+   "characters": 2280,
+   "inline_characters": 2280,
+   "truncated": [],
+   "verified": [],
+   "merged": []
+  }
+ },
+ "report_input": {
+  "Bulgular": [
+   {
+    "text": "Browser ve DNS erişimi _NoBrowser MetaPathFinder ve socket.getaddrinfo maymun yamasıyla main() girişinde engellenir",
+    "evidence_ids": [
+     "K2"
+    ]
+   },
+   {
+    "text": "Geçici dizin oluşturulup env değişkenleriyle DB/ayar yolları kurulur, cwd state dizinine değiştirilip finally'de geri alınır",
+    "evidence_ids": [
+     "K2"
+    ]
+   },
+   {
+    "text": "load_migrations() ile beklenen migration listesi alınır, database.initialize() taze migration listesini döndürür ve tekrar çağrıldığında boş dönerek idempotentlik doğrulanır",
+    "evidence_ids": [
+     "K2"
+    ]
+   },
+   {
+    "text": "Synthetic Adapter ve Transport fixture'ları ile collect_source() çağrılır, sonuç durumu _require ile kontrol edilir",
+    "evidence_ids": [
+     "K2"
+    ]
+   },
+   {
+    "text": "eligible_rows() ile eligibility kontrolü, process_observed_items() ile evaluate çalıştırılır, hata olmaması ve işlenen kayıt _require ile doğrulanır",
+    "evidence_ids": [
+     "K3"
+    ]
+   },
+   {
+    "text": "FastAPI TestClient ile /items liste, /items/{id} detay ve /static/app.js asset sayfalarının başarılı döndüğü doğrulanır",
+    "evidence_ids": [
+     "K3"
+    ]
+   },
+   {
+    "text": "sqlite3 backup ile canonical ve dashboard DB'leri yedeklenir, aynı sürüm reopen'da migration tekrar çağrılıp boş döndüğü doğrulanır",
+    "evidence_ids": [
+     "K3"
+    ]
+   },
+   {
+    "text": "Yedekten yeni restore dizinine kopyalanan DB'lerde migration checksum, listing verisi ve kullanıcı yapılandırmasının korunduğu _require ile doğrulanır",
+    "evidence_ids": [
+     "K3"
+    ]
+   },
+   {
+    "text": "RC-OSS-005 kartı mevcut release_smoke.py migration'dan fazlasını test eder iddiasını taşır ve #21/#22 bunu DB init'e düşürmeyi önerir",
+    "evidence_ids": [
+     "K1"
+    ]
+   },
+   {
+    "text": "test_release_smoke_client.py, scripts/export_smoke_client.py'den runpy ile export_client fonksiyonunu import eder, release_smoke.py'yi doğrudan çalıştırmaz",
+    "evidence_ids": [
+     "K4"
+    ]
+   },
+   {
+    "text": "Test olumlu durumda export_client(uv.lock) çıktısının certifi/httpcore/httpx paketlerini sha256 hash ile içerdiğini ve playwright olmadığını assert eder",
+    "evidence_ids": [
+     "K4"
+    ]
+   },
+   {
+    "text": "Parametrize olumsuz test missing/duplicate/no-wheel/bad-hash fixture durumlarında export_client çağrısının ValueError fırlatmasını bekler",
+    "evidence_ids": [
+     "K4"
+    ]
+   }
+  ],
+  "Belirsizlikler": [
+   {
+    "text": "Temiz kurulum ve sürümler arası update/rollback işlemleri salt-okur incelemede doğrulanamaz; kart DEVAM durumundadır",
+    "evidence_ids": [
+     "K1"
+    ]
+   },
+   {
+    "text": "Platform matrisi ve yayın kabulü kart beyanıdır, bu incelemede bağımsız doğrulanamaz",
+    "evidence_ids": [
+     "K1"
+    ]
+   },
+   {
+    "text": "Temiz ortamda lock çözümü, browser extra güvenlik işleri ve remote CI bu dilimde doğrulanamaz",
+    "evidence_ids": [
+     "K1"
+    ]
+   }
+  ],
+  "Yontem": [
+   {
+    "text": "scripts/release_smoke.py bütünüyle okunarak main() ve _exercise() içindeki tüm _require() çağrıları ve işlev adımları kataloglandı",
+    "evidence_ids": [
+     "K2",
+     "K3"
+    ]
+   },
+   {
+    "text": "tests/unit/test_release_smoke_client.py okunarak import hedefi, olumlu assert ve parametrize olumsuz fixture durumları belirlendi",
+    "evidence_ids": [
+     "K4"
+    ]
+   },
+   {
+    "text": "RC-OSS-005 kart metni backlog.text içindeki haliyle betik adımlarıyla karşılaştırıldı",
+    "evidence_ids": [
+     "K1"
+    ]
+   }
+  ]
+ },
+ "evidence": [
+  {
+   "id": "K1",
+   "tur": "dosya",
+   "kaynak": "06_PRODUCT_BACKLOG.md:924-957",
+   "beklenen": "#### [ ] RC-OSS-005 — Temiz install/update/rollback kalite kabulü (`P1`)",
+   "iddia": "RC-OSS-005 kartı (06_PRODUCT_BACKLOG.md:924-957) DEVAM durumunda; release_smoke.py'nin migration'dan fazlasını test ettiğini ve teknik matrix PASS olduğunu beyan eder"
+  },
+  {
+   "id": "K2",
+   "tur": "dosya",
+   "kaynak": "scripts/release_smoke.py:1-200",
+   "beklenen": "\"\"\"Exercise a distribution with disposable synthetic state and no browser/network.",
+   "iddia": "scripts/release_smoke.py satır 1-200; docstring, browser/DNS engeli, TemporaryDirectory ile ortam kurulumu, cwd izolasyonu, load_migrations/initialize ile migration adımı, synthetic Adapter/Transport ile collect_source çağrısı"
+  },
+  {
+   "id": "K3",
+   "tur": "dosya",
+   "kaynak": "scripts/release_smoke.py:201-305",
+   "beklenen": "        database,",
+   "iddia": "scripts/release_smoke.py satır 201-305; collect_source sonuç kontrolü, eligible_rows/process_observed_items ile evaluate, TestClient ile dashboard liste/detay/static, sqlite3 backup, same-version reopen, restore sonrası checksum/veri/config doğrulaması"
+  },
+  {
+   "id": "K4",
+   "tur": "dosya",
+   "kaynak": "tests/unit/test_release_smoke_client.py:1-50",
+   "beklenen": "from __future__ import annotations",
+   "iddia": "tests/unit/test_release_smoke_client.py; export_smoke_client.py'den export_client import eder; olumlu test certifi/httpcore/httpx sha256 hash ve playwright yokluğunu, olumsuz test missing/duplicate/no-wheel/bad-hash için ValueError bekler"
+  }
+ ],
+ "iddialar": [
+  {
+   "id": "Bulgular-1",
+   "text": "Browser ve DNS erişimi _NoBrowser MetaPathFinder ve socket.getaddrinfo maymun yamasıyla main() girişinde engellenir",
+   "evidence_ids": [
+    "K2"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {
+    "DNS": [
+     "K2:40: raise RuntimeError(\"Release smoke attempted external DNS\")",
+     "K2:74: \"reopen/restore; isolated cwd; local; no browser or DNS\""
+    ],
+    "_NoBrowser": [
+     "K2:27: class _NoBrowser(importlib.abc.MetaPathFinder):",
+     "K2:49: sys.meta_path.insert(0, _NoBrowser())"
+    ],
+    "MetaPathFinder": [
+     "K2:27: class _NoBrowser(importlib.abc.MetaPathFinder):"
+    ]
+   }
+  },
+  {
+   "id": "Bulgular-2",
+   "text": "Geçici dizin oluşturulup env değişkenleriyle DB/ayar yolları kurulur, cwd state dizinine değiştirilip finally'de geri alınır",
+   "evidence_ids": [
+    "K2"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {}
+  },
+  {
+   "id": "Bulgular-3",
+   "text": "load_migrations() ile beklenen migration listesi alınır, database.initialize() taze migration listesini döndürür ve tekrar çağrıldığında boş dönerek idempotentlik doğrulanır",
+   "evidence_ids": [
+    "K2"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {
+    "load_migrations": [
+     "K2:102: from feedloom.database import Database, load_migrations",
+     "K2:137: expected = tuple(load_migrations())"
+    ]
+   }
+  },
+  {
+   "id": "Bulgular-4",
+   "text": "Synthetic Adapter ve Transport fixture'ları ile collect_source() çağrılır, sonuç durumu _require ile kontrol edilir",
+   "evidence_ids": [
+    "K2"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {
+    "collect_source": [
+     "K2:95: collect_source,",
+     "K2:200: result = collect_source("
+    ],
+    "_require": [
+     "K2:43: def _require(condition: bool, message: str) -> None:",
+     "K2:107: _require("
+    ]
+   }
+  },
+  {
+   "id": "Bulgular-5",
+   "text": "eligible_rows() ile eligibility kontrolü, process_observed_items() ile evaluate çalıştırılır, hata olmaması ve işlenen kayıt _require ile doğrulanır",
+   "evidence_ids": [
+    "K3"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {
+    "eligible_rows": [
+     "K3:221: rows = eligible_rows([row], config, reader=reader)"
+    ],
+    "process_observed_items": [
+     "K3:230: from feedloom.pipeline import process_observed_items",
+     "K3:233: outcome = process_observed_items("
+    ],
+    "_require": [
+     "K3:208: _require(",
+     "K3:215: _require(row is not None, \"Collected listing missing\")"
+    ]
+   }
+  },
+  {
+   "id": "Bulgular-6",
+   "text": "FastAPI TestClient ile /items liste, /items/{id} detay ve /static/app.js asset sayfalarının başarılı döndüğü doğrulanır",
+   "evidence_ids": [
+    "K3"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [
+    "FastAPI"
+   ],
+   "terim_uyarilari": [
+    {
+     "terim": "FastAPI",
+     "istek_terimi": false,
+     "kapsam_satirlari": [
+      "kart:84: from fastapi.testclient import TestClient"
+     ]
+    }
+   ],
+   "kod_satirlari": {}
+  },
+  {
+   "id": "Bulgular-7",
+   "text": "sqlite3 backup ile canonical ve dashboard DB'leri yedeklenir, aynı sürüm reopen'da migration tekrar çağrılıp boş döndüğü doğrulanır",
+   "evidence_ids": [
+    "K3"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {
+    "sqlite3": [
+     "K3:213: reader = ListingReader(state / \"canonical.sqlite3\")",
+     "K3:244: store = DashboardStore(state / \"dashboard.sqlite3\")"
+    ]
+   }
+  },
+  {
+   "id": "Bulgular-8",
+   "text": "Yedekten yeni restore dizinine kopyalanan DB'lerde migration checksum, listing verisi ve kullanıcı yapılandırmasının korunduğu _require ile doğrulanır",
+   "evidence_ids": [
+    "K3"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {
+    "_require": [
+     "K3:208: _require(",
+     "K3:215: _require(row is not None, \"Collected listing missing\")"
+    ]
+   }
+  },
+  {
+   "id": "Bulgular-9",
+   "text": "RC-OSS-005 kartı mevcut release_smoke.py migration'dan fazlasını test eder iddiasını taşır ve #21/#22 bunu DB init'e düşürmeyi önerir",
+   "evidence_ids": [
+    "K1"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {
+    "RC-OSS-005": [
+     "K1:925: #### [ ] RC-OSS-005 — Temiz install/update/rollback kalite kabulü (`P1`)"
+    ]
+   }
+  },
+  {
+   "id": "Bulgular-10",
+   "text": "test_release_smoke_client.py, scripts/export_smoke_client.py'den runpy ile export_client fonksiyonunu import eder, release_smoke.py'yi doğrudan çalıştırmaz",
+   "evidence_ids": [
+    "K4"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {
+    "export_client": [
+     "K4:11: export_client = cast(",
+     "K4:13: runpy.run_path(str(ROOT / \"scripts/export_smoke_client.py\"))[\"export_client\"],"
+    ]
+   }
+  },
+  {
+   "id": "Bulgular-11",
+   "text": "Test olumlu durumda export_client(uv.lock) çıktısının certifi/httpcore/httpx paketlerini sha256 hash ile içerdiğini ve playwright olmadığını assert eder",
+   "evidence_ids": [
+    "K4"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {
+    "export_client": [
+     "K4:11: export_client = cast(",
+     "K4:13: runpy.run_path(str(ROOT / \"scripts/export_smoke_client.py\"))[\"export_client\"],"
+    ],
+    "sha256": [
+     "K4:22: assert all(\" --hash=sha256:\" in line for line in lines)",
+     "K4:34: digest = \"sha256:\" + \"1\" * 64"
+    ]
+   }
+  },
+  {
+   "id": "Bulgular-12",
+   "text": "Parametrize olumsuz test missing/duplicate/no-wheel/bad-hash fixture durumlarında export_client çağrısının ValueError fırlatmasını bekler",
+   "evidence_ids": [
+    "K4"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [
+    "fixture"
+   ],
+   "terim_uyarilari": [
+    {
+     "terim": "fixture",
+     "istek_terimi": false,
+     "kapsam_satirlari": [
+      "kart:147: return PageRequest(\"https://fixture.example.org/api/items\")",
+      "kart:167: source_url=\"https://fixture.example.org/items/1\",",
+      "kart:168: canonical_url=\"https://fixture.example.org/items/1\","
+     ]
+    }
+   ],
+   "kod_satirlari": {
+    "export_client": [
+     "K4:11: export_client = cast(",
+     "K4:13: runpy.run_path(str(ROOT / \"scripts/export_smoke_client.py\"))[\"export_client\"],"
+    ],
+    "ValueError": [
+     "K4:49: with pytest.raises(ValueError):"
+    ]
+   }
+  },
+  {
+   "id": "Belirsizlikler-1",
+   "text": "Temiz kurulum ve sürümler arası update/rollback işlemleri salt-okur incelemede doğrulanamaz; kart DEVAM durumundadır",
+   "evidence_ids": [
+    "K1"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {
+    "DEVAM": [
+     "K1:929: **Durum: DEVAM — teknik matrix6/6 PASS (09.10), yayın kabulü açık.** Gerçek"
+    ]
+   }
+  },
+  {
+   "id": "Belirsizlikler-2",
+   "text": "Platform matrisi ve yayın kabulü kart beyanıdır, bu incelemede bağımsız doğrulanamaz",
+   "evidence_ids": [
+    "K1"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {}
+  },
+  {
+   "id": "Belirsizlikler-3",
+   "text": "Temiz ortamda lock çözümü, browser extra güvenlik işleri ve remote CI bu dilimde doğrulanamaz",
+   "evidence_ids": [
+    "K1"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {}
+  },
+  {
+   "id": "Yontem-1",
+   "text": "scripts/release_smoke.py bütünüyle okunarak main() ve _exercise() içindeki tüm _require() çağrıları ve işlev adımları kataloglandı",
+   "evidence_ids": [
+    "K2",
+    "K3"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {
+    "_exercise": [
+     "K2:69: _exercise(state)",
+     "K2:79: def _exercise(state: Path) -> None:"
+    ],
+    "_require": [
+     "K2:43: def _require(condition: bool, message: str) -> None:",
+     "K2:107: _require("
+    ]
+   }
+  },
+  {
+   "id": "Yontem-2",
+   "text": "tests/unit/test_release_smoke_client.py okunarak import hedefi, olumlu assert ve parametrize olumsuz fixture durumları belirlendi",
+   "evidence_ids": [
+    "K4"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [
+    "fixture"
+   ],
+   "terim_uyarilari": [
+    {
+     "terim": "fixture",
+     "istek_terimi": false,
+     "kapsam_satirlari": [
+      "kart:147: return PageRequest(\"https://fixture.example.org/api/items\")",
+      "kart:167: source_url=\"https://fixture.example.org/items/1\",",
+      "kart:168: canonical_url=\"https://fixture.example.org/items/1\","
+     ]
+    }
+   ],
+   "kod_satirlari": {}
+  },
+  {
+   "id": "Yontem-3",
+   "text": "RC-OSS-005 kart metni backlog.text içindeki haliyle betik adımlarıyla karşılaştırıldı",
+   "evidence_ids": [
+    "K1"
+   ],
+   "kirpilan_kanitlar": [],
+   "kanitta_olmayan_terimler": [],
+   "terim_uyarilari": [],
+   "kod_satirlari": {
+    "RC-OSS-005": [
+     "K1:925: #### [ ] RC-OSS-005 — Temiz install/update/rollback kalite kabulü (`P1`)"
+    ]
+   }
+  }
+ ],
+ "operator": {
+  "karsilanmadi": [
+   "R3",
+   "R6",
+   "R11"
+  ]
+ }
+}

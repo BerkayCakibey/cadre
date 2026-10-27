@@ -1,0 +1,100 @@
+{
+ "run_id": "request-a4d1c115546a1497efbb2b40928de70f",
+ "provider": "openrouter",
+ "rows": 143,
+ "rows_with_provider_receipt": 140,
+ "rows_released_without_call": 3,
+ "reserved_usd": 5.775272,
+ "actual_usd": 1.404924,
+ "by_phase_role": {
+  "plan": {
+   "rows": 36,
+   "provider_receipts": 36,
+   "reserved_usd": 1.177792,
+   "actual_usd": 0.201074,
+   "input_tokens": 958820,
+   "output_tokens": 20984,
+   "cache_read_tokens": 875854
+  },
+  "review": {
+   "rows": 6,
+   "provider_receipts": 6,
+   "reserved_usd": 0.099026,
+   "actual_usd": 0.029379,
+   "input_tokens": 99308,
+   "output_tokens": 7566,
+   "cache_read_tokens": 88575
+  },
+  "kalite": {
+   "rows": 8,
+   "provider_receipts": 6,
+   "reserved_usd": 0.541447,
+   "actual_usd": 0.084262,
+   "input_tokens": 385084,
+   "output_tokens": 11641,
+   "cache_read_tokens": 329902
+  },
+  "qa": {
+   "rows": 1,
+   "provider_receipts": 0,
+   "reserved_usd": 0.163197,
+   "actual_usd": 0.0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "cache_read_tokens": 0
+  },
+  "impl": {
+   "rows": 92,
+   "provider_receipts": 92,
+   "reserved_usd": 3.79381,
+   "actual_usd": 1.090209,
+   "input_tokens": 7929350,
+   "output_tokens": 53849,
+   "cache_read_tokens": 7280735
+  }
+ },
+ "first_rows": [
+  {
+   "time": "2026-10-26 15:51:09",
+   "phase_role": "plan",
+   "task": "plan-input-8f47c0ba4a2e",
+   "budget_lane": "seritler",
+   "model": "deepseek/deepseek-v4-pro",
+   "endpoint": "streamlake/fp8",
+   "reserved_usd": 0.022879,
+   "actual_usd": 0.004517,
+   "input_tokens": 11654,
+   "output_tokens": 384,
+   "cache_read_tokens": 8393,
+   "receipt": "provider generation id (removed)"
+  },
+  {
+   "time": "2026-10-26 15:51:21",
+   "phase_role": "plan",
+   "task": "plan-input-8f47c0ba4a2e",
+   "budget_lane": "seritler",
+   "model": "deepseek/deepseek-v4-pro",
+   "endpoint": "streamlake/fp8",
+   "reserved_usd": 0.023289,
+   "actual_usd": 0.002215,
+   "input_tokens": 12152,
+   "output_tokens": 178,
+   "cache_read_tokens": 11116,
+   "receipt": "provider generation id (removed)"
+  },
+  {
+   "time": "2026-10-26 15:51:26",
+   "phase_role": "plan",
+   "task": "plan-input-8f47c0ba4a2e",
+   "budget_lane": "seritler",
+   "model": "deepseek/deepseek-v4-pro",
+   "endpoint": "streamlake/fp8",
+   "reserved_usd": 0.023476,
+   "actual_usd": 0.002658,
+   "input_tokens": 12541,
+   "output_tokens": 385,
+   "cache_read_tokens": 11486,
+   "receipt": "provider generation id (removed)"
+  }
+ ]
+}

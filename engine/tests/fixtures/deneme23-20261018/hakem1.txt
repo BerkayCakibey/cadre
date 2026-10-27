@@ -1,0 +1,302 @@
+Önce kaynak dosyaları okuyorum. Rapordaki K1-K4 kanıtlarının gerçek kaynakla eşleşmesini doğrulayacağım.
+
+Kaynak dosyalar okundu. Şimdi sistematik doğrulamayı yapıyorum.
+
+---
+
+## YOKLAMA (Kanıtların kaynakta bulunması)
+
+| ID | Kaynak | Sonuç |
+|---|---|---|
+| K1 | `06_PRODUCT_BACKLOG.md:924-957` (backlog.text) | RC-OSS-005 başlığı satır 925'te, DEVAM satır 929'da, "#21/#22 migration'dan fazlasını test eder" satır 953-954'te mevcut → **doğrulandı** |
+| K2 | `scripts/release_smoke.py:1-200` | `_NoBrowser` (satır 27), `_no_dns` (satır 40), `main()` (satır 48-76), `_exercise()` (satır 79-208), `TemporaryDirectory` (satır 51), `os.environ` (satır 53-62), `os.chdir`/`finally` (satır 67-72), `load_migrations`/`initialize` (satır 137-139), `Adapter` (satır 141-173), `Transport` (satır 175-183), `collect_source` (satır 200-208) → **doğrulandı** |
+| K3 | `scripts/release_smoke.py:201-305` | `_require(result.status==...)` (satır 206-208), `eligible_rows` (satır 221), `process_observed_items` (satır 230-237), `TestClient` `/items` `/items/{id}` `/static/app.js` (satır 253-268), `sqlite3.backup` (satır 269-278), reopen `initialize()==()` (satır 279-281), restore checksum/veri/config `_require` (satır 283-305) → **doğrulandı** |
+| K4 | `tests/unit/test_release_smoke_client.py:1-50` | `runpy.run_path("...export_smoke_client.py")["export_client"]` (satır 11-13), olumlu test `certifi/httpcore/httpx` + `sha256` + `playwright` yok (satır 17-22), `parametrize missing/duplicate/no-wheel/bad-hash` + `pytest.raises(ValueError)` (satır 25-50) → **doğrulandı** |
+
+## İDDİALAR (Her kanıtlı cümle için destek değerlendirmesi)
+
+**Bulgular-1**: `_NoBrowser(MetaPathFinder)` satır 27'de, `socket.getaddrinfo = _no_dns` satır 50'de → destek=**tam** (terimler: `_NoBrowser` - var, `MetaPathFinder` - var, `DNS` - `_no_dns` ile var)
+
+**Bulgular-2**: `TemporaryDirectory` satır 51, `os.environ.update` satır 53-62, `os.chdir(state)` satır 68, `finally: os.chdir(previous_cwd)` satır 71-72 → destek=**tam**
+
+**Bulgular-3**: `load_migrations()` satır 102/137, `database.initialize() == expected` satır 138, `database.initialize() == ()` satır 139 → destek=**tam**
+
+**Bulgular-4**: `Adapter` satır 141-173, `Transport` satır 175-183, `collect_source(` satır 200, `_require(result.status == "success"...` satır 206-208 → destek=**tam**
+
+**Bulgular-5**: `eligible_rows` satır 221, `process_observed_items` satır 230/233, `_require(not outcome.failures...` satır 236-237 → destek=**tam**
+
+**Bulgular-6**: `from fastapi.testclient import TestClient` satır 84, `/items` satır 257, `/items/{identifier}` satır 263, `/static/app.js` satır 266. "FastAPI" terimi → **esdeger**: kodda `fastapi` (küçük harf) aynı paket → destek=**tam**
+
+**Bulgular-7**: `sqlite3.connect`/`live.backup(saved)` satır 270-275, `Database(...).initialize() == ()` satır 279-281 → destek=**tam**
+
+**Bulgular-8**: `restored` dizini satır 285-288, `Database(restored...).initialize() == ()` satır 289-291, `ListingReader(...).listing(identifier) == row` satır 293-295, `load_user_config(saved_config) == config` satır 299-301 → destek=**tam**
+
+**Bulgular-9**: K1 satır 925 `RC-OSS-005`, satır 953-954 `migration'dan fazlasını test eder` + `DB init'e düşürme` (#21/#22) → destek=**tam**
+
+**Bulgular-10**: K4 satır 11-13 `runpy.run_path(...export_smoke_client.py)["export_client"]`, release_smoke.py import edilmez → destek=**tam**
+
+**Bulgular-11**: K4 satır 20 `certifi/httpcore/httpx`, satır 21 `sha256`, satır 22 `playwright not in result` → destek=**tam**
+
+**Bulgular-12**: K4 satır 25 `parametrize("problem", ["missing", "duplicate", "no-wheel", "bad-hash"])`, satır 49 `pytest.raises(ValueError)`. "fixture" → **bağlam**: pytest parametrize, fixture türevidir → destek=**tam**
+
+**Belirsizlikler-1**: K1 satır 929 `Durum: DEVAM`, satır 943-944 `Tam kart kapatılmadı` → destek=**tam**
+
+**Belirsizlikler-2**: K1 satır 929 `teknik matrix6/6 PASS, yayın kabulü açık` → destek=**tam**
+
+**Belirsizlikler-3**: K1 satır 947-948 `browser extra güvenlik işleri ayrı`, satır 937-938 `Remote CI yok`, satır 951-952 `mevcut lock temiz ortamda çözülür` → destek=**tam**
+
+**Yöntem-1,2,3**: K2/K3/K4/K1'de ilgili fonksiyon ve bölümler mevcut → destek=**tam**
+
+## GEREKSİNİMLER
+
+R1-R19 (icerik) karsılandı; R20-R21 (surec) rapor_dışı. R18 ve R19 için tüm rapor ögeleri yasaklı içerik barındırmaz (sayım/PASS/kapanış yok). Görev g1.1-g3.6'nın tümü karsılandı; g2.1'deki "3 satir" ifadesi R18 yasağı nedeniyle raporda yer almaz, ancak assertlerin özü (paket adları, hash, playwright yokluğu) Bulgular-11'de tam olarak belirtilmiştir.
+
+```json
+{
+  "revision": "7304bdb4a87476e70a3e101780623b16f4b769b5231e1dc171a3e2308f90b183",
+  "verdict": "GECER",
+  "acceptance": [
+    {
+      "id": "request",
+      "status": "PASS",
+      "evidence": "Rapor yalnız scripts/release_smoke.py, tests/unit/test_release_smoke_client.py ve RC-OSS-005 kart dilimini salt-okur inceler; Bulgular, Belirsizlikler ve Yontem bolumleriyle istek kapsamını tam karşılar."
+    },
+    {
+      "id": "evidence",
+      "status": "PASS",
+      "evidence": "K1-K4 olmak uzere 4 dosya:satir kaniti kullanılmış; kanit_siniri 5 aşılmamış; komut kaniti yok (qa.sayac.komut_ornek=0)."
+    },
+    {
+      "id": "scope",
+      "status": "PASS",
+      "evidence": "Yalnız source_read_paths kapsamındaki 3 dosya okunmuş; docs/reviews/** okunmamış; script/test çalıştırma, kurulum, ağ isteği, PASS iddiası yok."
+    },
+    {
+      "id": "task:g1",
+      "status": "PASS",
+      "evidence": "release_smoke.py adımları [K2][K3] ile kataloglanmış (Bulgular-1..8); yapmadığı adımlar Belirsizlikler'de ayrı liste; migration karsılastırması Bulgular-9'da yapılmış."
+    },
+    {
+      "id": "task:g2",
+      "status": "PASS",
+      "evidence": "Testin import hedefi export_smoke_client.py [K4] Bulgular-10'da; olumlu assertler (certifi/httpcore/httpx, sha256, playwright yok) Bulgular-11'de; olumsuz durumlar (missing/duplicate/no-wheel/bad-hash, ValueError) Bulgular-12'de; release_smoke.py ile doğrudan ilişki olmadığı Bulgular-10'da belirtilmiş."
+    },
+    {
+      "id": "task:g3",
+      "status": "PASS",
+      "evidence": "Bulgular'da migration dışı adımlar K2/K3 ile gösterilmiş; test dosyasının export_smoke_client.py'yi test ettiği yazılmış; Belirsizlikler'de temiz kurulum/update/rollback/platform matrisi/yayın kabulü doğrulanamaz denmiş; RC-OSS-005 DEVAM belirtilmiş; 4 kanit kullanılmış; sayım yok."
+    }
+  ],
+  "yoklama": [
+    {
+      "id": "K1",
+      "sonuc": "dogrulandi",
+      "kanit": "06_PRODUCT_BACKLOG.md:924-957 (backlog.text): satır 925'te RC-OSS-005 başlığı, 929'da DEVAM, 953-954'te migration'dan fazlasını test eder ve #21/#22 DB init önerisi birebir mevcut."
+    },
+    {
+      "id": "K2",
+      "sonuc": "dogrulandi",
+      "kanit": "scripts/release_smoke.py:1-200: _NoBrowser (27), _no_dns (40), main() TemporaryDirectory/os.environ/cwd (48-76), _exercise() load_migrations/initialize (79-139), Adapter/Transport (141-183), collect_source (200-208) birebir mevcut."
+    },
+    {
+      "id": "K3",
+      "sonuc": "dogrulandi",
+      "kanit": "scripts/release_smoke.py:201-305: collect_source _require kontrolü (206-208), eligible_rows (221), process_observed_items (230-237), TestClient /items /items/{id} /static/app.js (253-268), sqlite3 backup (269-278), reopen (279-281), restore checksum/listing/config kontrolü (283-305) birebir mevcut."
+    },
+    {
+      "id": "K4",
+      "sonuc": "dogrulandi",
+      "kanit": "tests/unit/test_release_smoke_client.py:1-50: runpy.run_path ile export_smoke_client.py'den export_client importu (11-13), olumlu test certifi/httpcore/httpx + sha256 + playwright yok (17-22), parametrize missing/duplicate/no-wheel/bad-hash + ValueError (25-50) birebir mevcut."
+    }
+  ],
+  "iddialar": [
+    {
+      "id": "Bulgular-1",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "_NoBrowser", "durum": "olumsuz"},
+        {"terim": "MetaPathFinder", "durum": "olumsuz"},
+        {"terim": "DNS", "durum": "olumsuz"}
+      ],
+      "gerekce": "K2:27-28 _NoBrowser(MetaPathFinder) sınıfı, K2:40 _no_dns fonksiyonu, K2:49-50 main() girişinde sys.meta_path.insert ve socket.getaddrinfo = _no_dns atamaları kanıt aralığında birebir mevcut."
+    },
+    {
+      "id": "Bulgular-2",
+      "destek": "tam",
+      "terimler": [],
+      "gerekce": "K2:51 TemporaryDirectory, K2:53-62 os.environ.update ile DB/ayar yolları, K2:67-68 os.chdir(state), K2:71-72 finally: os.chdir(previous_cwd) kanıt aralığında birebir mevcut."
+    },
+    {
+      "id": "Bulgular-3",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "load_migrations", "durum": "olumsuz"}
+      ],
+      "gerekce": "K2:102 import Database/load_migrations, K2:137 tuple(load_migrations()), K2:138 initialize()==expected, K2:139 initialize()==() ile idempotentlik kontrolü kanıt aralığında birebir mevcut."
+    },
+    {
+      "id": "Bulgular-4",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "collect_source", "durum": "olumsuz"},
+        {"terim": "_require", "durum": "olumsuz"}
+      ],
+      "gerekce": "K2:95 collect_source importu, K2:141-173 Adapter sınıfı, K2:175-183 Transport sınıfı, K2:200 result = collect_source( çağrısı, K2:206-208 _require(result.status=='success'...) kontrolü kanıt aralığında birebir mevcut."
+    },
+    {
+      "id": "Bulgular-5",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "eligible_rows", "durum": "olumsuz"},
+        {"terim": "process_observed_items", "durum": "olumsuz"},
+        {"terim": "_require", "durum": "olumsuz"}
+      ],
+      "gerekce": "K3:221 eligible_rows([row], config, reader=reader), K3:230/233 process_observed_items, K3:236-237 _require(not outcome.failures and len(outcome.processed)==1) kanıt aralığında birebir mevcut."
+    },
+    {
+      "id": "Bulgular-6",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "FastAPI", "durum": "esdeger"}
+      ],
+      "gerekce": "K3:84'te 'from fastapi.testclient import TestClient' — FastAPI paketi küçük harf 'fastapi' olarak import edilir; aynı paket. K3:257-268 aralığında /items, /items/{id}, /static/app.js çağrıları ve status_code==200 kontrolleri birebir mevcut."
+    },
+    {
+      "id": "Bulgular-7",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "sqlite3", "durum": "olumsuz"}
+      ],
+      "gerekce": "K3:270-275 sqlite3.connect ile live.backup(saved), K3:279-281 Database(...).initialize()==() ile reopen kontrolü kanıt aralığında birebir mevcut."
+    },
+    {
+      "id": "Bulgular-8",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "_require", "durum": "olumsuz"}
+      ],
+      "gerekce": "K3:285-288 restored dizini oluşturma, K3:289-291 Database(restored...).initialize()==(), K3:293-295 ListingReader listing karşılaştırması, K3:299-301 load_user_config karşılaştırması kanıt aralığında birebir mevcut."
+    },
+    {
+      "id": "Bulgular-9",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "RC-OSS-005", "durum": "olumsuz"}
+      ],
+      "gerekce": "K1:925 RC-OSS-005 başlığı, K1:953-954 'mevcut release_smoke.py migration'dan fazlasını test eder; bunu yeniden yalnız DB init'e düşürme' (#21/#22) kanıt aralığında birebir mevcut."
+    },
+    {
+      "id": "Bulgular-10",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "export_client", "durum": "olumsuz"}
+      ],
+      "gerekce": "K4:11-13 runpy.run_path(...'scripts/export_smoke_client.py')['export_client'] importu mevcut; release_smoke.py importu yok — test doğrudan release_smoke.py çalıştırmaz."
+    },
+    {
+      "id": "Bulgular-11",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "export_client", "durum": "olumsuz"},
+        {"terim": "sha256", "durum": "olumsuz"}
+      ],
+      "gerekce": "K4:18 export_client(ROOT/'uv.lock') çağrısı, K4:20 certifi/httpcore/httpx asserti, K4:21 sha256 hash asserti, K4:22 playwright yok asserti kanıt aralığında birebir mevcut."
+    },
+    {
+      "id": "Bulgular-12",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "export_client", "durum": "olumsuz"},
+        {"terim": "ValueError", "durum": "olumsuz"},
+        {"terim": "fixture", "durum": "baglam"}
+      ],
+      "gerekce": "K4:25 parametrize ile missing/duplicate/no-wheel/bad-hash, K4:49 pytest.raises(ValueError) kanıt aralığında birebir mevcut. 'fixture' pytest parametrize bağlamında kullanılmıştır."
+    },
+    {
+      "id": "Belirsizlikler-1",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "DEVAM", "durum": "olumsuz"}
+      ],
+      "gerekce": "K1:929 'Durum: DEVAM', K1:943-944 'Tam kart kapatılmadı' kanıt aralığında mevcut. Temiz kurulum/update/rollback doğrulanamazlığı salt-okur inceleme kapsamının meşru sınırıdır."
+    },
+    {
+      "id": "Belirsizlikler-2",
+      "destek": "tam",
+      "terimler": [],
+      "gerekce": "K1:929-936 aralığında Mac ARM64/Linux ARM64/Python sürümleri, 'teknik matrix6/6 PASS', 'yayın kabulü açık' kart beyanı olarak mevcut. Bağımsız doğrulama salt-okur kapsamda mümkün değil."
+    },
+    {
+      "id": "Belirsizlikler-3",
+      "destek": "tam",
+      "terimler": [],
+      "gerekce": "K1:947-948 'browser extra güvenlik işleri ayrı', K1:937-938 'Remote CI yok', K1:951-952 'mevcut lock temiz ortamda çözülür' kanıt aralığında mevcut. Salt-okur incelemede doğrulanamaz."
+    },
+    {
+      "id": "Yontem-1",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "_exercise", "durum": "olumsuz"},
+        {"terim": "_require", "durum": "olumsuz"}
+      ],
+      "gerekce": "K2:69 _exercise(state) çağrısı, K2:79 def _exercise, K2:43 def _require tanımları, K3'teki tüm _require çağrıları kanıt aralığında mevcut."
+    },
+    {
+      "id": "Yontem-2",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "fixture", "durum": "baglam"}
+      ],
+      "gerekce": "K4 dosyasının tamamı okunmuş; import hedefi (satır 11-13), olumlu assert (satır 17-22), parametrize olumsuz durumlar (satır 25-50) kanıt aralığında mevcut. 'fixture' pytest terminolojisinde parametrize ile eşdeğer bağlamda kullanılmıştır."
+    },
+    {
+      "id": "Yontem-3",
+      "destek": "tam",
+      "terimler": [
+        {"terim": "RC-OSS-005", "durum": "olumsuz"}
+      ],
+      "gerekce": "K1:925-957 aralığında RC-OSS-005 kart metni tam olarak mevcut; Bulgular-1..8 ile betik adımları karşılaştırılmıştır."
+    }
+  ],
+  "gereksinimler": [
+    {"id": "R1", "durum": "karsilandi", "rapor": ["Bulgular-1", "Bulgular-2", "Bulgular-3", "Bulgular-4", "Bulgular-5", "Bulgular-6", "Bulgular-7", "Bulgular-8", "Bulgular-9", "Bulgular-10", "Bulgular-11", "Bulgular-12", "Belirsizlikler-1", "Belirsizlikler-2", "Belirsizlikler-3", "Yontem-1", "Yontem-2", "Yontem-3"], "gerekce": "Tüm rapor ögeleri yalnız belirtilen 3 dosya kapsamındadır."},
+    {"id": "R2", "durum": "rapor_disi", "rapor": [], "gerekce": "Surec kriteri: salt-okur inceleme olduğundan kaynak değişmemiştir."},
+    {"id": "R3", "durum": "karsilandi", "rapor": ["Bulgular-2"], "gerekce": "Geçici dizin ve env değişkenleriyle DB/ayar yolları kurulumu Bulgular-2'de açıklanmıştır."},
+    {"id": "R4", "durum": "karsilandi", "rapor": ["Bulgular-2"], "gerekce": "cwd değişikliği ve finally'de geri alınması Bulgular-2'de açıklanmıştır."},
+    {"id": "R5", "durum": "karsilandi", "rapor": ["Bulgular-1"], "gerekce": "_NoBrowser MetaPathFinder ve socket.getaddrinfo maymun yaması Bulgular-1'de açıklanmıştır."},
+    {"id": "R6", "durum": "karsilandi", "rapor": ["Bulgular-3", "Bulgular-7", "Bulgular-8"], "gerekce": "Migration çağrısı/koşulu Bulgular-3'te, aynı sürüm reopen Bulgular-7'de, restore sonrası checksum/veri/config Bulgular-8'de açıklanmıştır."},
+    {"id": "R7", "durum": "karsilandi", "rapor": ["Bulgular-4", "Bulgular-5"], "gerekce": "Collect_source çağrısı ve _require kontrolü Bulgular-4'te, evaluate (eligible_rows + process_observed_items) Bulgular-5'te açıklanmıştır."},
+    {"id": "R8", "durum": "karsilandi", "rapor": ["Bulgular-6"], "gerekce": "TestClient ile /items, /items/{id}, /static/app.js kontrolleri Bulgular-6'da açıklanmıştır."},
+    {"id": "R9", "durum": "karsilandi", "rapor": ["Bulgular-7", "Bulgular-8"], "gerekce": "Backup ve aynı sürüm reopen Bulgular-7'de, restore sonrası checksum/veri/config Bulgular-8'de açıklanmıştır."},
+    {"id": "R10", "durum": "karsilandi", "rapor": ["Bulgular-10"], "gerekce": "Testin export_smoke_client.py'den runpy ile import ettiği, release_smoke.py'yi doğrudan çalıştırmadığı Bulgular-10'da açıklanmıştır."},
+    {"id": "R11", "durum": "karsilandi", "rapor": ["Bulgular-11"], "gerekce": "Certifi/httpcore/httpx paketleri, sha256 hash ve playwright yokluğu assertleri Bulgular-11'de somut olarak yazılmıştır."},
+    {"id": "R12", "durum": "karsilandi", "rapor": ["Bulgular-12"], "gerekce": "Missing/duplicate/no-wheel/bad-hash için ValueError beklenmesi Bulgular-12'de somut yazılmıştır."},
+    {"id": "R13", "durum": "karsilandi", "rapor": ["Bulgular-9", "Bulgular-3", "Bulgular-4", "Bulgular-5", "Bulgular-6", "Bulgular-7", "Bulgular-8"], "gerekce": "Kart iddiası Bulgular-9'da alıntılanmış, migration dışı adımlar Bulgular-3..8 ile gösterilerek karşılaştırma yapılmıştır."},
+    {"id": "R14", "durum": "karsilandi", "rapor": ["Belirsizlikler-2"], "gerekce": "Platform matrisi ve yayın kabulü kart beyanı olarak Belirsizlikler-2'de açıkça karta atfedilmiştir."},
+    {"id": "R15", "durum": "karsilandi", "rapor": ["Belirsizlikler-1", "Belirsizlikler-2", "Belirsizlikler-3"], "gerekce": "Temiz kurulum/update/rollback Belirsizlikler-1'de, platform matrisi/yayın kabulü Belirsizlikler-2'de, lock çözümü/browser/remote CI Belirsizlikler-3'te doğrulanamaz olarak yazılmıştır."},
+    {"id": "R16", "durum": "karsilandi", "rapor": ["Belirsizlikler-1"], "gerekce": "Belirsizlikler-1'de 'kart DEVAM durumundadır' ifadesi mevcuttur."},
+    {"id": "R17", "durum": "karsilandi", "rapor": ["qa.sayac"], "gerekce": "qa.sayac: kanit=4 (≤5), komut_ornek=0; komut kanıtı yok."},
+    {"id": "R18", "durum": "karsilandi", "rapor": ["Bulgular-1", "Bulgular-2", "Bulgular-3", "Bulgular-4", "Bulgular-5", "Bulgular-6", "Bulgular-7", "Bulgular-8", "Bulgular-9", "Bulgular-10", "Bulgular-11", "Bulgular-12", "Belirsizlikler-1", "Belirsizlikler-2", "Belirsizlikler-3", "Yontem-1", "Yontem-2", "Yontem-3"], "gerekce": "Rapor metninde ve tüm rapor ögelerinde test adedi, sayımı veya 'N test'/'N adet' ifadesi bulunmamaktadır."},
+    {"id": "R19", "durum": "karsilandi", "rapor": ["Bulgular-1", "Bulgular-2", "Bulgular-3", "Bulgular-4", "Bulgular-5", "Bulgular-6", "Bulgular-7", "Bulgular-8", "Bulgular-9", "Bulgular-10", "Bulgular-11", "Bulgular-12", "Belirsizlikler-1", "Belirsizlikler-2", "Belirsizlikler-3", "Yontem-1", "Yontem-2", "Yontem-3"], "gerekce": "Raporda script/test yürütme PASS iddiası veya kart kapanışı iddiası bulunmamaktadır; RC-OSS-005 DEVAM olarak belirtilmiştir."},
+    {"id": "R20", "durum": "rapor_disi", "rapor": [], "gerekce": "Surec kriteri: bu incelemenin kendisi bağımsız salt-okur son incelemedir."},
+    {"id": "R21", "durum": "rapor_disi", "rapor": [], "gerekce": "Surec kriteri: butce/sure sabit sınırlar içinde yurutulmektedir."},
+    {"id": "g1.1", "durum": "karsilandi", "rapor": ["Bulgular-1", "Bulgular-2", "Bulgular-3", "Bulgular-4", "Bulgular-5", "Bulgular-6", "Bulgular-7", "Bulgular-8"], "gerekce": "Her adım [K2] veya [K3] dosya:satır referanslı kanıtla raporlanmıştır."},
+    {"id": "g1.2", "durum": "karsilandi", "rapor": ["Belirsizlikler-1", "Belirsizlikler-2"], "gerekce": "Update/rollback ve temiz kurulum Belirsizlikler-1'de, platform matrisi Belirsizlikler-2'de betiğin yapmadığı adımlar olarak ayrı listelenmiştir."},
+    {"id": "g1.3", "durum": "karsilandi", "rapor": ["Bulgular-9", "Bulgular-3", "Bulgular-4", "Bulgular-5", "Bulgular-6", "Bulgular-7", "Bulgular-8"], "gerekce": "Kart iddiası Bulgular-9'da alıntılanmış, migration dışı adımlar gösterilerek karşılaştırma yapılmıştır."},
+    {"id": "g2.1", "durum": "karsilandi", "rapor": ["Bulgular-10", "Bulgular-11", "Bulgular-12"], "gerekce": "Import hedefi Bulgular-10'da, olumlu assertler (certifi/httpcore/httpx, sha256, playwright yok) Bulgular-11'de, olumsuz durumlar (missing/duplicate/no-wheel/bad-hash, ValueError) Bulgular-12'de dosya:satir kanıtıyla belirtilmiştir. '3 satir' ifadesi R18 yasağı gereği raporda yer almaz; assertlerin özü tamdır."},
+    {"id": "g3.1", "durum": "karsilandi", "rapor": ["Bulgular-9", "Bulgular-4", "Bulgular-5", "Bulgular-6", "Bulgular-7", "Bulgular-8"], "gerekce": "Migration dışı collect (Bulgular-4), evaluate (Bulgular-5), dashboard/static (Bulgular-6), reopen (Bulgular-7), restore (Bulgular-8) adımları K1-K4 kanıtlarıyla gösterilmiştir."},
+    {"id": "g3.2", "durum": "karsilandi", "rapor": ["Bulgular-10"], "gerekce": "Bulgular-10'da testin release_smoke.py'yi değil export_smoke_client.py'yi test ettiği açıkça belirtilmiştir."},
+    {"id": "g3.3", "durum": "karsilandi", "rapor": ["Belirsizlikler-1", "Belirsizlikler-2", "Belirsizlikler-3"], "gerekce": "Temiz kurulum/update/rollback Belirsizlikler-1'de, platform matrisi/yayın kabulü Belirsizlikler-2'de, lock/browser/CI Belirsizlikler-3'te doğrulanamaz olarak yazılmıştır."},
+    {"id": "g3.4", "durum": "karsilandi", "rapor": ["Belirsizlikler-1"], "gerekce": "Belirsizlikler-1'de 'kart DEVAM durumundadır' ifadesi mevcuttur."},
+    {"id": "g3.5", "durum": "karsilandi", "rapor": ["qa.sayac"], "gerekce": "qa.sayac: kanit=4, en fazla 5 sınırı aşılmamıştır."},
+    {"id": "g3.6", "durum": "karsilandi", "rapor": ["Bulgular-1", "Bulgular-2", "Bulgular-3", "Bulgular-4", "Bulgular-5", "Bulgular-6", "Bulgular-7", "Bulgular-8", "Bulgular-9", "Bulgular-10", "Bulgular-11", "Bulgular-12", "Belirsizlikler-1", "Belirsizlikler-2", "Belirsizlikler-3", "Yontem-1", "Yontem-2", "Yontem-3"], "gerekce": "Tüm rapor ögelerinde sayı/satım ifadesi bulunmamaktadır."}
+  ],
+  "decisions": [],
+  "assumptions": [
+    {"id": "A1", "choice": "Raporun qa.sayac alanı kanıt sayısı ve komut kontrolü için R17/g3.5 gereksinimlerinde kullanılmıştır", "reason": "qa.sayac rapor tesliminin parçasıdır ve mekanik kanıt sayımı için tek güvenilir kaynaktır"},
+    {"id": "A2", "choice": "g2.1'deki '3 satir' ifadesi R18 sayım yasağıyla çeliştiğinden raporda yer almaz; bu eksiklik değil uyumdur", "reason": "R18 icerik kriteri sayımı yasaklar; g2.1 kabulündeki '3 satir' gösterge niteliğindedir, assertlerin özü Bulgular-11'de tamdır"}
+  ]
+}
+```
+
+**VERDICT: GECER** — Tüm yoklamalar doğrulandı, tüm iddialar tam destekli, tüm içerik gereksinimleri rapor ögeleriyle karşılandı.

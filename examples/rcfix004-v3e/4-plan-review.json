@@ -1,0 +1,40 @@
+{
+ "status": "PASS",
+ "verdict": "GECER",
+ "revision_number": 1,
+ "model": "openrouter/deepseek/deepseek-v4-pro",
+ "acceptance": [
+  {
+   "id": "request",
+   "status": "PASS",
+   "evidence": "Plan task g1: sourceUrl missing/null/empty + a verified raw id → fallback URL; sanitized/hash-form id → rejection; missing/bool id → rejection; sourceUrl present → existing behaviour. All branches of the original request (1)-(6),(4b),(5a),(5b) are named in the plan acceptance."
+  },
+  {
+   "id": "scope",
+   "status": "PASS",
+   "evidence": "The plan targets only open_apis.py and test_open_api_adapters.py (g1.dosyalar). The same as the original request's scope_files. No other file, fixture or configuration is added."
+  },
+  {
+   "id": "acceptance",
+   "status": "PASS",
+   "evidence": "g1.kabul: (1) fixture record 4 normalized, fallback URL, source_record_key 'alphafeed:dddd...667780', dispositions ['normalized','filtered','normalized','normalized'], equal replay; (2) items[0] with a sourceUrl is kept; (3) sourceUrl null/empty + a valid id → the same as (1), the title matches; (4) sanitized id → rejected, external_id sha256-, no fallback; (4b) hash-form id → rejected, no fallback; (5a) no id → rejected; (5b) bool id → rejected; (6) the BetaFeed test and the other existing tests are kept. Every item is named separately."
+  },
+  {
+   "id": "feasibility",
+   "status": "PASS",
+   "evidence": "_identifier_was_sanitized is already computed at open_apis.py:4118 but not used in the existing code — the branch to add is minimal. safe_external_id does not change UUIDs and hashes toxic strings. identify_item_url produces a canonical URL and item_key on the /items/<UUID> path. No external dependency, install or new file."
+  },
+  {
+   "id": "source",
+   "status": "PASS",
+   "evidence": "kaynak_kapsami_gerekli: false → empty source_items and source_coverage {sha256:null,characters:0} is the expected state. Not a defect. No source_sha256 check is needed."
+  },
+  {
+   "id": "g1",
+   "status": "PASS",
+   "evidence": "A single task covers the whole change: the parse_page branch at line 4133 of open_apis.py changes, the existing fixture test in the test file is updated + new tests are added. Estimate 45 min, cost 0.55 USD. No dependencies. Assumptions A1-A3 are justified and reversible."
+  }
+ ],
+ "assumptions": [],
+ "decisions": []
+}

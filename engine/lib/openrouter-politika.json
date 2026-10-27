@@ -1,0 +1,49 @@
+{
+  "deepseek/deepseek-v4-pro": {
+    "kademeler": [
+      "streamlake/fp8",
+      "deepinfra/fp8"
+    ],
+    "max_price": {
+      "prompt": 1.74,
+      "completion": 3.84
+    }
+  },
+  "deepseek/deepseek-v4-flash": {
+    "kademeler": [
+      "streamlake/fp8",
+      "deepinfra/fp8"
+    ],
+    "max_price": {
+      "prompt": 0.14,
+      "completion": 0.28
+    }
+  },
+  "z-ai/glm-5.3": {
+    "kuantizasyon": "fp8",
+    "max_price": {
+      "prompt": 1.4,
+      "completion": 4.4
+    }
+  },
+  "qwen/qwen3.8-max-0902": {
+    "kapali": true,
+    "kademeler": [
+      "alibaba"
+    ],
+    "max_price": {
+      "prompt": 2,
+      "completion": 6
+    }
+  },
+  "openai/gpt-6.1-sol": {
+    "kapali": true,
+    "kademeler": [
+      "openai"
+    ],
+    "max_price": {
+      "prompt": 2,
+      "completion": 10
+    }
+  }
+}

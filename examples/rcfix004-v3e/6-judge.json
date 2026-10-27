@@ -1,0 +1,36 @@
+{
+ "status": "PASS",
+ "verdict": "GECER",
+ "given_model": "openrouter/deepseek/deepseek-v4-pro",
+ "independent": true,
+ "candidates": [
+  "openrouter/deepseek/deepseek-v4-pro"
+ ],
+ "acceptance": [
+  {
+   "id": "original_request",
+   "status": "PASS",
+   "evidence": "Product code (src/feedloom/adapters/open_apis.py lines 4131-4153): if supplied_url exists it is used as is via urljoin; otherwise, in the _identifier_was_sanitized False branch, if raw_id is not in hash form (no fullmatch of ^sha256-[0-9a-f]{64}$) the https://www.alphafeed.example/items/<external_id> fallback URL is produced and enters the normal identify_item_url/dedupe_eligible/ItemVersionData flow; in hash form or with _identifier_was_sanitized True it stays rejected. The publisher_name None check keeps the same rejected behaviour. The other adapters, url_identity.py, collectors.py and the fixture files are unchanged (only two files in the diff). Ids that start with SHA256- but do not contain 64 hex (e.g. sha256-public-item) produce a fallback."
+  },
+  {
+   "id": "g1",
+   "status": "PASS",
+   "evidence": "(1) Fixture record 4 (dddd1111): test_alphafeed_fixture_maps_fields_and_uses_source_url lines 1437-1490; dispositions ['normalized','filtered','normalized','normalized'], platform.source_url='https://www.alphafeed.example/items/dddd1111-2222-3333-4444-555566667780', canonical_url the same, item_key correct, source_record_key 'alphafeed:dddd1111-...', first==second. (2) The items[0] gammafeed URL assertions are kept (lines 1444-1463). (3) Tests for sourceUrl null (eeee1111) and '' (ffff1111) + a valid id exist, title_terms match; the sourceurl_missing_title_terms_used test [norm,filt] is correct. (4) Sanitized ids: ../../etc/passwd and token=abcdef123456 rejected in separate tests, candidate None, external_id starting with sha256-. (4b) Hash-form id (sha256-+64a): rejected, candidate None. (5a) No id: rejected. (5b) id=True: rejected. (6) The BetaFeed test_betafeed_stops_paginating_on_last_page +30 line completion is in place (lines 1269-1298), second_page.next_request is None kept."
+  },
+  {
+   "id": "request_acceptance",
+   "status": "PASS",
+   "evidence": "ID CHECKS: (5a) no id→rejected, (5b) bool id→rejected, existing behaviour kept. (4) Sanitized ids (../../etc/passwd, token=...) → rejected, starting with sha256-. sourceUrl null/empty + a valid UUID id → normalized with the https://www.alphafeed.example/items/<id> fallback. The behaviour of records with a sourceUrl is kept as is (items[0] gammafeed). The fallback is forbidden in two cases: if _identifier sanitized the id or if raw_id matches the ^sha256-[0-9a-f]{64}$ regex. Ids not in hash format like sha256-public-item produce a fallback. The plan acceptance text names (1)-(6),(4b),(5a),(5b) separately. The fixture test is updated, the BetaFeed test kept. Only two files changed: open_apis.py and test_open_api_adapters.py. QA: ruff format/check PASS, basedpyright PASS, pytest 396/396 PASS. Process check TAM, patch preservation KORUNDU. Total cost 1.34 USD (under the 3.2 USD cap)."
+  },
+  {
+   "id": "request_output",
+   "status": "PASS",
+   "evidence": "Two changed files: src/feedloom/adapters/open_apis.py (AlphaFeed fallback URL logic added in parse_page, the publisher_name check separated) and tests/unit/test_open_api_adapters.py (8 new AlphaFeed tests, the fixture test updated, the BetaFeed test completion kept, the deltafeed import format fixed). QA evidence: pytest 396/396 PASS, ruff format/lint PASS, basedpyright PASS, product binding PASS. The product revision digest 66b3df1708bd6c6ef248770e136c3ff962eba8f82272cd5f9a6e0fb320432419 matches the QA record."
+  },
+  {
+   "id": "degisen_testler",
+   "status": "PASS",
+   "evidence": "Changes in tests/unit/test_open_api_adapters.py: (a) the test_betafeed_stops_paginating_on_last_page completion was added (+30 lines, including second_page.next_request is None). (b) test_alphafeed_fixture: 'rejected'→'normalized' in the dispositions list, candidate not None and fallback URL assertions added for items[3]; the existing items[0] and items[2] assertions are kept as is. (c) 8 new tests added (null URL, empty URL, title_terms, sanitize/path, sanitize/token, hash id, no id, bool id). (d) deltafeed_next_page import: the pyright ignore comment moved to the next line (a format change, not functional). No assertion was loosened, deleted or skipped. All existing tests run (396/396 PASS)."
+  }
+ ]
+}

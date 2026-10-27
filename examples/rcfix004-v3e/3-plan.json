@@ -1,0 +1,48 @@
+{
+ "is_id": "request-plan",
+ "is_turu": "code",
+ "gorevler": [
+  {
+   "id": "g1",
+   "tanim": "AlphaFeedAdapter.parse_page: produce the https://www.alphafeed.example/items/<id> fallback URL for records whose sourceUrl is missing/null/empty but whose raw id is verified; reject the fallback for sanitized/hash-form ids",
+   "kabul": "(1) fixture record 4 (id dddd1111-2222-3333-4444-555566667780, title 'Sample Item', no sourceUrl) new behaviour: disposition normalized, candidate not None, source_url 'https://www.alphafeed.example/items/dddd1111-2222-3333-4444-555566667780', canonical_url the same, item_key item_key_from_url(canonical_url), source_record_key 'alphafeed:dddd1111-2222-3333-4444-555566667780', dispositions ['normalized','filtered','normalized','normalized'], first==second replay\n(2) the assertions of the record with a sourceUrl (the items[0] gammafeed publisher URL) are kept as they are\n(3) sourceUrl null and sourceUrl '' + a valid id -> the same fallback as (1); in the tests the title matches the query title_terms\n(4) no sourceUrl + a sanitized id (../../etc/passwd, token=abcdef123456) -> disposition rejected, candidate None, external_id starts with sha256-, no fallback URL\n(4b) no sourceUrl + a ready hash-form id (^sha256-[0-9a-f]{64}$) -> disposition rejected, candidate None, no fallback URL\n(5a) no sourceUrl + no id field at all -> disposition rejected\n(5b) no sourceUrl + id True/False (bool) -> disposition rejected\n(6) test_betafeed_stops_paginating_on_last_page and the other existing tests in the file do not change",
+   "dosyalar": [
+    "src/feedloom/adapters/open_apis.py",
+    "tests/unit/test_open_api_adapters.py"
+   ],
+   "model": "auto",
+   "zorluk": 1,
+   "paralel_grup": 0,
+   "tahmin_dk": 45,
+   "tahmin_usd": 0.55,
+   "bagimli": []
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "A1",
+   "choice": "while _identifier_was_sanitized is False, external_id is used directly as a URL segment",
+   "reason": "when safe_external_id does not change it, external_id == the normalized raw id; it contains no path traversal or credential residue"
+  },
+  {
+   "id": "A2",
+   "choice": "https://www.alphafeed.example/items/<id> is accepted by identify_item_url as dedupe_eligible and canonical",
+   "reason": "since the last segment of the path /items/<UUID> is a UUID it is not in _GENERIC_PATH_SEGMENTS; base_path_is_non_atomic=False, no query, nothing sensitive"
+  },
+  {
+   "id": "A3",
+   "choice": "the safe_external_id hash form ^sha256-[0-9a-f]{64}$ is fixed",
+   "reason": "_HASHED_EXTERNAL_ID_PATTERN defined in collectors.py is a fixed regex; an equivalent local constant is used in open_apis.py"
+  }
+ ],
+ "decisions": [],
+ "source_items": [],
+ "source_coverage": {
+  "sha256": null,
+  "characters": 0,
+  "inline_characters": 0,
+  "truncated": [],
+  "verified": [],
+  "merged": []
+ }
+}

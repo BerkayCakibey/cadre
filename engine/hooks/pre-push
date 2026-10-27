@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# Cadre worktree pre-push guard.
+# Active only in AI worktrees (installed via per-worktree core.hooksPath).
+# Allows:  fast-forward pushes of refs/heads/cadre/* to a CONFIGURED remote.
+# Denies:  any other destination ref (canonical branches, tags included),
+#          branch deletions, non-fast-forward (force) pushes, and pushes to
+#          a remote URL that is not one of the repo's configured remotes.
+# Chains to the repository's own pre-push hook afterwards, if one exists.
+set -u
+ZERO=0000000000000000000000000000000000000000
+CADRE_HOME="${CADRE_HOME:-$HOME/.local/share/cadre-engineering}"
+LOG="$CADRE_HOME/logs/guard.log"
+
+glog() { printf '%s pre-push %s\n' "$(date '+%F %T')" "$*" >> "$LOG" 2>/dev/null || true; }
+deny() {
+  echo "cadre-guard: PUSH DENIED: $1" >&2
+  echo "cadre-guard: only fast-forward pushes of your own cadre/* branch to a configured remote are allowed." >&2
+  glog "DENY $1"
+  exit 1
+}
+
+remote="$1"; url="$2"
+
+# Pin the destination to a configured remote URL — block exfiltration to an
+# arbitrary host via `git push <url> ...`.
+approved_url=0
+# NOTE: git passes remote.<name>.pushurl as $2 when one is configured, so the
+# allow-list must accept both `url` and `pushurl` (a fetch-HTTPS / push-SSH
+# repo otherwise had EVERY push denied).
+for u in $(git config --get-regexp '^remote\..*\.(push)?url$' 2>/dev/null | awk '{print $2}'); do
+  [ "$u" = "$url" ] && approved_url=1
+done
+[ "$approved_url" = 1 ] || deny "destination url '$url' is not a configured remote"
+
+stdin_copy=""
+allow_pending=""
+# `|| [ -n "$local_ref" ]` so a final unterminated line is not silently dropped.
+while read -r local_ref local_sha remote_ref remote_sha || [ -n "$local_ref" ]; do
+  [ -n "$local_ref" ] || continue
+  stdin_copy="${stdin_copy}${local_ref} ${local_sha} ${remote_ref} ${remote_sha}
+"
+  case "$remote_ref" in
+    refs/heads/cadre/*) ;;
+    *) deny "destination '$remote_ref' is not a cadre/* branch" ;;
+  esac
+  if [ "$local_sha" = "$ZERO" ]; then
+    deny "deletion of remote branch '$remote_ref'"
+  fi
+  if [ "$remote_sha" != "$ZERO" ]; then
+    if ! git merge-base --is-ancestor "$remote_sha" "$local_sha" 2>/dev/null; then
+      deny "non-fast-forward (force) push to '$remote_ref'"
+    fi
+  fi
+  # Buffer the ALLOW record; only commit it to the log once the whole push is
+  # accepted, so the audit trail never says ALLOW for an aborted push.
+  allow_pending="${allow_pending}ALLOW $remote_ref -> $remote ($url)
+"
+done
+
+printf '%s' "$allow_pending" | while IFS= read -r line; do [ -n "$line" ] && glog "$line"; done
+
+# Chain to the repository's own pre-push hook (e.g. pre-commit framework /
+# husky). Read the repo's OWN hooksPath at --local scope (excludes our
+# --worktree override, so no recursion); fall back to the standard hooks dir.
+orig=""
+lhp="$(git config --local core.hooksPath 2>/dev/null || true)"
+if [ -n "$lhp" ]; then
+  case "$lhp" in
+    /*) orig="$lhp/pre-push" ;;
+    *)  orig="$(git rev-parse --show-toplevel 2>/dev/null)/$lhp/pre-push" ;;
+  esac
+else
+  cdir="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+  [ -n "$cdir" ] && orig="$cdir/hooks/pre-push"
+fi
+if [ -n "$orig" ] && [ -x "$orig" ]; then
+  # Never chain into OURSELF — see the note in pre-commit. Here it is worse than
+  # a hang: this spawns a child rather than exec'ing, so self-chaining forks
+  # without bound.
+  self="$(cd "$(dirname "$0")" 2>/dev/null && pwd -P)/$(basename "$0")"
+  that="$(cd "$(dirname "$orig")" 2>/dev/null && pwd -P)/$(basename "$orig")"
+  [ "$self" = "$that" ] || printf '%s' "$stdin_copy" | "$orig" "$remote" "$url" || exit $?
+fi
+exit 0

@@ -1,0 +1,10 @@
+{
+  "cikti": {"plan": 65536, "kalite": 32768, "qa": 32768, "serit": 32768},
+  "son_sure_sn": {"plan": 1800, "kalite": 2400, "qa": 2700, "bolme": 900},
+  "motor_sure_sn": {"uyari": 2700, "son": 5400},
+  "baglam": {"serit_tavan": 262144, "serit_pay": 20000},
+  "openrouter": {"fiyat_taze_sn": 3600, "fiyat_tekrar_sn": 300, "fiyat_yas_sn": 21600, "dusuk_uptime": 95, "oturum_yapiskan_sn": 0, "uc_hata_sn": 1800},
+  "inceleme": {"surum": "sinirli-inceleme-v3", "plan-review": {"istek": 7, "arac": 12, "sure_sn": 300, "pay_yuzde": 20}, "review-author": {"istek": 9, "arac": 16, "sure_sn": 480, "pay_yuzde": 15}, "review-final": {"istek": 6, "arac": 10, "sure_sn": 510, "pay_yuzde": 30}, "review-recheck": {"istek": 6, "arac": 10, "sure_sn": 510, "pay_yuzde": 30}, "cepler": {"seritler": 0.40, "hakem": 0.50, "yardimci": 0.10}},
+  "inceleme_kod": {"surum": "sinirli-kod-plan-v1", "plan_pay_yuzde": 100},
+  "efor": {"surum": "ekonomik-efor-v1", "kolay_serit": null}
+}

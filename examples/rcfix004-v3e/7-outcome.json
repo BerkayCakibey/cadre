@@ -1,0 +1,52 @@
+{
+ "state": "completed",
+ "final_status": "PASS",
+ "revision": {
+  "head": "dde96b28a8b4b4b3aaf6ace622526d30386aada7",
+  "digest": "66b3df1708bd6c6ef248770e136c3ff962eba8f82272cd5f9a6e0fb320432419"
+ },
+ "scope": {
+  "files": [
+   "src/feedloom/adapters/open_apis.py",
+   "tests/unit/test_open_api_adapters.py"
+  ],
+  "tests": [
+   "tests/unit/test_open_api_adapters.py"
+  ]
+ },
+ "budget_cap_usd": 3.2,
+ "budget_spent_usd": 1.404924,
+ "budget_shares": {
+  "seritler": 0.55,
+  "hakem": 0.25,
+  "yardimci": 0.2
+ },
+ "active_seconds": 2730,
+ "models": {
+  "plan": [
+   "openrouter/deepseek/deepseek-v4-pro"
+  ],
+  "review": [
+   "openrouter/deepseek/deepseek-v4-pro"
+  ],
+  "impl": [
+   "openrouter/deepseek/deepseek-v4-pro"
+  ],
+  "kalite": [
+   "openrouter/deepseek/deepseek-v4-pro"
+  ],
+  "birlestirme": [
+   "openrouter/deepseek/deepseek-v4-pro"
+  ],
+  "kurtarici": [
+   "openrouter/deepseek/deepseek-v4-pro"
+  ]
+ },
+ "timeline": {
+  "started": "2026-10-26 15:51",
+  "plan_reviewed": "16:04",
+  "implemented": "16:31",
+  "qa_passed": "16:31",
+  "judge_passed": "16:40"
+ }
+}

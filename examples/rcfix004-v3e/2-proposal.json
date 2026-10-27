@@ -1,0 +1,196 @@
+{
+ "action": {
+  "run_id": "request-a4d1c115546a1497efbb2b40928de70f",
+  "request_hash": "65b6d962d0853b5fa156bd9ffb07af52061d394ff9f1ef596f4722adb3ff0595",
+  "source": {
+   "head": "dde96b28a8b4b4b3aaf6ace622526d30386aada7",
+   "digest": "e2f8dba2f787af5ec72329ef9fa3e996371ab4fedbe2be038076e8bc6e278270"
+  },
+  "models": {
+   "plan": [
+    "openrouter/deepseek/deepseek-v4-pro"
+   ],
+   "review": [
+    "openrouter/deepseek/deepseek-v4-pro"
+   ],
+   "impl": [
+    "openrouter/deepseek/deepseek-v4-pro"
+   ],
+   "kalite": [
+    "openrouter/deepseek/deepseek-v4-pro"
+   ],
+   "birlestirme": [
+    "openrouter/deepseek/deepseek-v4-pro"
+   ],
+   "kurtarici": [
+    "openrouter/deepseek/deepseek-v4-pro"
+   ]
+  },
+  "providers": [
+   "openrouter"
+  ],
+  "or_policy": {
+   "openrouter/deepseek/deepseek-v4-pro": {
+    "kademeler": [
+     "streamlake/fp8",
+     "deepinfra/fp8"
+    ],
+    "max_price": {
+     "completion": 3.84
+    }
+   }
+  },
+  "duration_minutes": 90,
+  "budget_usd": "3.2",
+  "review_limits": {
+   "surum": "sinirli-kod-plan-v1",
+   "plan-review": {
+    "istek": 7,
+    "arac": 12,
+    "sure_sn": 300,
+    "pay_yuzde": 100
+   },
+   "review-author": {
+    "istek": 9,
+    "arac": 16,
+    "sure_sn": 480,
+    "pay_yuzde": 15
+   },
+   "review-final": {
+    "istek": 6,
+    "arac": 10,
+    "sure_sn": 510,
+    "pay_yuzde": 30
+   },
+   "review-recheck": {
+    "istek": 6,
+    "arac": 10,
+    "sure_sn": 510,
+    "pay_yuzde": 30
+   },
+   "cepler": {
+    "seritler": 0.4,
+    "hakem": 0.5,
+    "yardimci": 0.1
+   }
+  },
+  "supervision": {
+   "version": 1,
+   "mode": "step"
+  },
+  "qa_profile": {
+   "version": 1,
+   "scope": "local",
+   "deferred": [
+    {
+     "path": "tests/integration/test_source_contracts.py",
+     "sha256": "87e9100df36821f8b88b48acd6987a66fa2fcbc4fc5bf021056199cb6d692b35",
+     "reason": "Live source contract phase: FEEDLOOM_NETWORK_TESTS=1; not part of native local make check acceptance"
+    },
+    {
+     "path": "tests/integration/test_source_field_registry.py",
+     "sha256": "29b42fe4cb675e0ae8ea00347ab7f244da2095b55641d4674f715e312c7a7d83",
+     "reason": "Live source contract phase: FEEDLOOM_NETWORK_TESTS=1; not part of native local make check acceptance"
+    }
+   ],
+   "excluded": [
+    {
+     "path": "docs/reviews/2026-09-26/test_browser_redirect.py",
+     "sha256": "2c5d767e4b78e09842fe30d66d4ad1a9a3fb80227617e5af6b1ee4fc3829e23b",
+     "reason": "Historical review/archived diagnostic; outside tests/unit and tests/integration. The target repository's rules reject the old SAFE gates."
+    },
+    {
+     "path": "tools/archive/test_safe001_document.py",
+     "sha256": "c2b515be81721a1a34216f1cee6ff62518a3bf85a71413cdd784b13ab198fe78",
+     "reason": "Historical review/archived diagnostic; outside tests/unit and tests/integration. The target repository's rules reject the old SAFE gates."
+    },
+    {
+     "path": "tools/archive/test_safe001_check.py",
+     "sha256": "7c0cbd459efa0394340e00acc52f039192af67a12f9925bdf113f1fe857bab61",
+     "reason": "Historical review/archived diagnostic; outside tests/unit and tests/integration. The target repository's rules reject the old SAFE gates."
+    },
+    {
+     "path": "tools/archive/test_mcp_check.py",
+     "sha256": "27a11770f353cdcaf396b2de29d5f6fd4b4c83ae51c73ca1608c7bf221678c4f",
+     "reason": "Historical review/archived diagnostic; outside tests/unit and tests/integration. The target repository's rules reject the old SAFE gates."
+    },
+    {
+     "path": "tools/archive/test_privacy_check.py",
+     "sha256": "496f689290ebb8d4162bf8be5361ee7fb4c5a45aaaeb5e05a65b773fb6dd4a94",
+     "reason": "Historical review/archived diagnostic; outside tests/unit and tests/integration. The target repository's rules reject the old SAFE gates."
+    },
+    {
+     "path": "tools/archive/test_containment_check.py",
+     "sha256": "2a24f8d42423ee7fcb5afd258d735a97c0d230c89d54ef42e4a0953ceb2b55f2",
+     "reason": "Historical review/archived diagnostic; outside tests/unit and tests/integration. The target repository's rules reject the old SAFE gates."
+    }
+   ]
+  },
+  "target_path": "~/.local/share/cadre-engineering/worktrees/feedloom/codex-code25-source",
+  "input_mode": "goal",
+  "output": "Fallback URL behaviour from a verified raw id in the AlphaFeed adapter, tests that lock it, and real QA/acceptance evidence for only the two related files",
+  "permissions": [
+   "model-calls",
+   "isolated-local-edit"
+  ],
+  "forbidden": [
+   "commit",
+   "push",
+   "merge",
+   "install",
+   "publish",
+   "original-repo-edit"
+  ],
+  "qa_command": {
+   "source": "project",
+   "command": "~/.local/share/cadre-engineering/projects/feedloom/public-source/.venv/bin/python -m ruff format --check src/feedloom/adapters/open_apis.py tests/unit/test_open_api_adapters.py && ~/.local/share/cadre-engineering/projects/feedloom/public-source/.venv/bin/python -m ruff check src/feedloom/adapters/open_apis.py tests/unit/test_open_api_adapters.py && ~/.local/share/cadre-engineering/projects/feedloom/public-source/.venv/bin/python -m basedpyright --venvpath ~/.local/share/cadre-engineering/projects/feedloom/public-source src/feedloom/adapters/open_apis.py tests/unit/test_open_api_adapters.py && ~/.local/share/cadre-engineering/projects/feedloom/public-source/.venv/bin/python -m pytest -q -o addopts= tests/unit/test_open_api_adapters.py",
+   "sha256": "e1709ad88953b3b88fef74987571960f37e7c02a8f616ec49401ff36b5f12eac"
+  },
+  "acceptance_scope": {
+   "files": [
+    "src/feedloom/adapters/open_apis.py",
+    "tests/unit/test_open_api_adapters.py"
+   ],
+   "tests": [
+    "tests/unit/test_open_api_adapters.py"
+   ]
+  },
+  "budget_shares": {
+   "seritler": 0.55,
+   "hakem": 0.25,
+   "yardimci": 0.2
+  }
+ },
+ "reasons": {
+  "plan": [
+   "difficulty-preference-role-v1: preference=economic, difficulty=easy, role=plan, rule=approved-glm-first",
+   "openrouter/deepseek/deepseek-v4-pro: OK (the shared gate has a usable share)",
+   "deepseekv4pro: route order openrouter/deepseek/deepseek-v4-pro"
+  ],
+  "review": [
+   "difficulty-preference-role-v1: preference=economic, difficulty=easy, role=review, rule=approved-glm-first",
+   "openrouter/deepseek/deepseek-v4-pro: OK (the shared gate has a usable share)",
+   "deepseekv4pro: route order openrouter/deepseek/deepseek-v4-pro"
+  ],
+  "impl": [
+   "difficulty-preference-role-v1: preference=economic, difficulty=easy, role=impl, rule=approved-glm-first",
+   "openrouter/deepseek/deepseek-v4-pro: OK (the shared gate has a usable share)",
+   "deepseekv4pro: route order openrouter/deepseek/deepseek-v4-pro"
+  ],
+  "kalite": [
+   "difficulty-preference-role-v1: preference=economic, difficulty=easy, role=kalite, rule=approved-glm-first",
+   "openrouter/deepseek/deepseek-v4-pro: OK (the shared gate has a usable share)",
+   "deepseekv4pro: route order openrouter/deepseek/deepseek-v4-pro"
+  ],
+  "birlestirme": [
+   "difficulty-preference-role-v1: preference=economic, difficulty=easy, role=birlestirme, rule=approved-role-order",
+   "openrouter/deepseek/deepseek-v4-pro: OK (the shared gate has a usable share)",
+   "deepseekv4pro: route order openrouter/deepseek/deepseek-v4-pro"
+  ],
+  "kurtarici": [
+   "difficulty-preference-role-v1: preference=economic, difficulty=easy, role=kurtarici, rule=approved-role-order",
+   "openrouter/deepseek/deepseek-v4-pro: OK (the shared gate has a usable share)",
+   "deepseekv4pro: route order openrouter/deepseek/deepseek-v4-pro"
+  ]
+ }
+}

@@ -1,0 +1,12 @@
+Denetim tamamlandı — tüm kanıtlar toplandı, düzeltme gerekmedi (test silme/commit yok).
+
+**Denetlenenler:**
+- Dallanma: `cadre/20260923-043146-...` worktree ✓; HEAD hâlâ `f08bef7` (koşu commit yapmamış, yalnız `A tests/unit/test_cli_version.py` staged + 2 untracked akış dosyası)
+- Diff `f08bef7...`: yalnız `tests/unit/test_cli_version.py` eklendi; `src/` ve mevcut testler değişmemiş (changed_files'ın 3'ü de tek tek okundu)
+- (a) `--version`: `cli.py:2042-2044` `action="version"`, `version=f"%(prog)s {package_version()}"`, prog=`feedloom` → test SystemExit 0 + çıktı + boş stderr'i doğruluyor; **2 passed**
+- (b) `collect --help`: `cli.py:2426` subparser mevcut; test rc=0 + `feedloom collect` + `fixture` içeriğini doğruluyor; **2 passed**
+- (c) `make check`: QA 2. deneme exit 0; log: format 161 dosya, ruff "All checks passed", basedpyright "0 errors", pytest **3093 passed** / 97 skipped, pip-audit temiz, distribution audit geçti
+
+```json
+{"revision": "1ac22fd46a8262c44dff3425958192510553527ba8b45125b643f28026540951", "verdict": "GECER", "acceptance": [{"id": "main", "status": "PASS", "evidence": "(a) src/feedloom/cli.py:2042-2044 --version action='version' version=f\"%(prog)s {package_version()}\" (prog='feedloom') korundu; test_cli_version.py::test_version_flag_prints_exact_version SystemExit.code==0, out.strip()==f\"feedloom {package_version()}\" ve err=='' assert ediyor — odaklı koşu: '2 passed in 0.05s'. (b) cli.py:2426 collect subparser mevcut (alt komutlar: fixture, live); test_collect_help_prints_subcommand_help SystemExit.code==0 ve çıktıda 'feedloom collect' + 'fixture' doğruluyor — aynı koşuda PASS. (c) make check: QA koşusu 2. deneme exit_code=0; log kanıtı: ruff format 161 dosya hazır, ruff check 'All checks passed', basedpyright '0 errors, 0 warnings, 0 notes', pytest '3093 passed, 97 skipped', pip-audit 'No known vulnerabilities', check_distribution.py 'distribution audit passed'. Kapsam: git diff f08bef7... yalnız tests/unit/test_cli_version.py'yi gösteriyor (36 satır ekleme); src/ ve mevcut testler değişmedi; HEAD f08bef7'de duruyor (commit/push yapılmadı); .gorevler.json ve .cadre-plan/ koşu akış dosyaları, ürün kodu değil. Ek not: .gorevler.json'daki 05-make-check notu tip adımının o an kırmızı olduğunu yazıyor ancak nihai QA gate'i (hedef revizyonda exit 0, basedpyright 0 hata) yeşildir; bu, koşu anına ait bayat bir kayıttır, ürün kusuru değildir."}]}
+```

@@ -1,0 +1,16 @@
+# Secrets never go in
+*.key
+*.pem
+.env
+.env.*
+!.env.example
+
+# build leftovers
+__pycache__/
+*.pyc
+
+# Local experiments, logs and drafts; not permanent project sources
+/.tmp/
+
+# macOS
+.DS_Store
